@@ -67,7 +67,11 @@ const userSlice = createSlice({
             state.lrState = 0;
             state.lrMessage = "";
         },
-        logoutFailure: (_state) => {alert("Logout failed???");}
+        logoutFailure: (_state) => {alert("Logout failed???");},
+
+
+        userOnlyEndpoint: (_state) => {},
+        adminOnlyEndpoint: (_state) => {}
     }
 });
 
@@ -76,7 +80,9 @@ export const {
     loginStart, loginSuccess, loginFailure,
     registerStart, registerSuccess, registerFailure,
     getUserStart, getUserSuccess, getUserFailure,
-    logoutStart, logoutSuccess, logoutFailure
+    logoutStart, logoutSuccess, logoutFailure,
+
+    userOnlyEndpoint, adminOnlyEndpoint
 } = userSlice.actions;
 
 export default userSlice.reducer;

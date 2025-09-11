@@ -48,7 +48,7 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
         </div>
     );
 
-    if (user.op != role) {
+    if (role != 2 && user.op != role) {
         if (role == 0) return <h1>This page is only available to regular users.</h1>
         if (role == 1) return <h1>This page is only available to admins.</h1>
         return <h1>User doesnt have the permission to use this page.</h1>

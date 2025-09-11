@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router'
 import Navbar from './components/Navbar'
 import AuthRoute from './components/AuthRoute'
 import { useAppDispatch } from './hooks'
-import { getUserStart } from './features/user/usersSlice'
+import { adminOnlyEndpoint, getUserStart, userOnlyEndpoint } from './features/user/usersSlice'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -19,7 +19,10 @@ function App() {
     <Routes>
       <Route index element={<h1>Home</h1>} />
       <Route path='/texts' element={
-        <AuthRoute role={0}><h1>Texts</h1></AuthRoute>
+        <AuthRoute role={2}><div>
+            <button onClick={() => dispatch(userOnlyEndpoint())}>User only</button>
+            <button onClick={() => dispatch(adminOnlyEndpoint())}>Admin only</button>
+          </div></AuthRoute>
       }></Route>
     </Routes>
   </React.Fragment>

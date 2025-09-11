@@ -67,7 +67,7 @@ function* getUser(): Generator {
         const json = yield res.json();
         yield put(getUserSuccess(json));
     } catch(e) {
-        console.error(e);
+        console.error();
         yield put(getUserFailure());
     }
 }
@@ -75,7 +75,7 @@ function* getUser(): Generator {
 function* logout(): Generator {
     try {
         const res = yield call(() => fetch(logoutEndpoint, {credentials: "include", method:"POST"}));
-        if (!res.ok) throw res;
+        if (!res.ok) {throw res;}
 
         yield put(logoutSuccess());
     } catch(e) {
@@ -84,12 +84,35 @@ function* logout(): Generator {
     }
 }
 
+function* testUserOnly(): Generator {
+    try {
+        const res = yield call(() => fetch("api/user/testUser", {credentials: "include"}));
+
+        if (!res.ok) {
+            alert(yield res.text());
+        } else alert("Success");
+    } catch(e){}
+}
+
+function* testAdminOnly(): Generator {
+    try {
+        const res = yield call(() => fetch("api/user/testAdmin", {credentials: "include"}));
+
+        if (!res.ok) {
+            alert(yield res.text());
+        } else alert("Success");
+    } catch(e){}
+}
+
 
 function* usersSaga() {
     yield takeEvery("users/loginStart", login);
     yield takeEvery("users/registerStart", register);
     yield takeEvery("users/getUserStart", getUser);
     yield takeEvery("users/logoutStart", logout);
+
+    yield takeEvery("users/userOnlyEndpoint", testUserOnly);
+    yield takeEvery("users/adminOnlyEndpoint", testAdminOnly);
 }
 
 export default usersSaga;

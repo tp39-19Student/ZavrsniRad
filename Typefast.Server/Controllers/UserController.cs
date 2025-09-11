@@ -1,14 +1,18 @@
 
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
+using Typefast.Server.Middleware;
 using Typefast.Server.Models;
+using Typefast.Server.Services;
 
 namespace Typefast.Server.Controllers
 {
@@ -30,6 +34,7 @@ namespace Typefast.Server.Controllers
             public string Password { get; set; }
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginRequest req)
         {
@@ -47,6 +52,7 @@ namespace Typefast.Server.Controllers
             return Created();
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<Person>> Login(LoginRequest req)
         {
@@ -69,22 +75,32 @@ namespace Typefast.Server.Controllers
             return user;
         }
 
+        [AllowAnonymous]
         [HttpGet("get")]
-        public ActionResult<Person> GetUser()
+        public ActionResult<Person> GetUser(UserContainer user)
         {
-            var id = User.FindFirst("Id")?.Value;
-            if (id == null) return NoContent();
-
-            var user = _db.People.FirstOrDefault(u => u.IdPer == int.Parse(id));
-            if (user == null) return NoContent();
-
-            return user;
+            if (user.User == null) return NoContent();
+            return user.User;
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
+        }
+
+        [UserOnly]
+        [HttpGet("testUser")]
+        public IActionResult UserOnlyTest()
+        {
+            return Ok();
+        }
+
+        [AdminOnly]
+        [HttpGet("testAdmin")]
+        public IActionResult AdminOnlyTest()
+        {
             return Ok();
         }
     }

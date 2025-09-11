@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server;
 using Typefast.Server.Data;
+using Typefast.Server.Middleware;
 using Typefast.Server.Models;
+using Typefast.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<PasswordHasher<Person>>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
+builder.Services.AddScoped<UserContainer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,10 +35,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
+
+app.UseMiddleware<AuthMiddleware>();
 
 app.MapControllers();
 
