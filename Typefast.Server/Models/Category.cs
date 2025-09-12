@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Typefast.Server.Models
 {
@@ -11,5 +12,8 @@ namespace Typefast.Server.Models
         [Key]
         public int IdCat { get; set; }
         public string? Name { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Text> Texts { get; set; } = new List<Text>();
     }
 }

@@ -13,5 +13,8 @@ namespace Typefast.Server.Models
         public int IdTex { get; set; }
         public string? Content { get; set; }
         public int IdCat { get; set; }
+        public bool Approved { get; set; }
+
+        public Category Category { get; set; }
     }
 }

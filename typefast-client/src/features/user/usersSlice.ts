@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-type User = {
+export type User = {
     username: string;
     op: number;
     gold: number;
@@ -28,7 +28,7 @@ export interface LoginRequest {
     password: string;
 }
 
-const userSlice = createSlice({
+const usersSlice = createSlice({
     name: "users",
     initialState,
     reducers: {
@@ -83,6 +83,6 @@ export const {
     logoutStart, logoutSuccess, logoutFailure,
 
     userOnlyEndpoint, adminOnlyEndpoint
-} = userSlice.actions;
+} = usersSlice.actions;
 
-export default userSlice.reducer;
+export default usersSlice.reducer;

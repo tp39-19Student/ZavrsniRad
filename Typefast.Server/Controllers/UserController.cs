@@ -21,24 +21,24 @@ namespace Typefast.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly PasswordHasher<Person> _hasher;
-        private readonly AppDbContext _db;
-        public UserController(PasswordHasher<Person> hasher, AppDbContext db)
+        private readonly UserService _userService;
+        public UserController(PasswordHasher<Person> hasher, UserService userService)
         {
             _hasher = hasher;
-            _db = db;
+            _userService = userService;
         }
 
         public class LoginRequest
         {
-            public string Username { get; set; }
-            public string Password { get; set; }
+            public required string Username { get; set; }
+            public required string Password { get; set; }
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginRequest req)
         {
-            if (await _db.People.FirstOrDefaultAsync(u => u.Username == req.Username) != null)
+            if (await _userService.GetByUsername(req.Username) != null)
             {
                 return StatusCode(StatusCodes.Status409Conflict, "The provided username already exists");
             }
@@ -46,8 +46,7 @@ namespace Typefast.Server.Controllers
             var user = new Person { Username = req.Username };
             user.Password = _hasher.HashPassword(user, req.Password);
 
-            _db.People.Add(user);
-            _db.SaveChanges();
+            await _userService.Add(user);
 
             return Created();
         }
@@ -56,7 +55,7 @@ namespace Typefast.Server.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Person>> Login(LoginRequest req)
         {
-            var user = _db.People.FirstOrDefault(u => u.Username == req.Username);
+            var user = await _userService.GetByUsername(req.Username);
             if (user == null) return StatusCode(StatusCodes.Status404NotFound, "Incorrect login credentials");
 
             var result = _hasher.VerifyHashedPassword(user, user.Password, req.Password);

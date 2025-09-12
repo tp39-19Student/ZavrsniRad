@@ -58,9 +58,7 @@ function* register(action: PayloadAction<LoginRequest>): Generator {
 
 function* getUser(): Generator {
     try {
-        const res: Response = yield call(() => fetch(getUserEndpoint, {
-            credentials: "include"
-        }));
+        const res: Response = yield call(() => fetch(getUserEndpoint));
         if (res.status == 204) {return;}
         if (!res.ok) throw res;
 
@@ -74,7 +72,7 @@ function* getUser(): Generator {
 
 function* logout(): Generator {
     try {
-        const res = yield call(() => fetch(logoutEndpoint, {credentials: "include", method:"POST"}));
+        const res = yield call(() => fetch(logoutEndpoint, {method:"POST"}));
         if (!res.ok) {throw res;}
 
         yield put(logoutSuccess());
@@ -86,7 +84,7 @@ function* logout(): Generator {
 
 function* testUserOnly(): Generator {
     try {
-        const res = yield call(() => fetch("api/user/testUser", {credentials: "include"}));
+        const res = yield call(() => fetch("api/user/testUser"));
 
         if (!res.ok) {
             alert(yield res.text());
@@ -96,7 +94,7 @@ function* testUserOnly(): Generator {
 
 function* testAdminOnly(): Generator {
     try {
-        const res = yield call(() => fetch("api/user/testAdmin", {credentials: "include"}));
+        const res = yield call(() => fetch("api/user/testAdmin"));
 
         if (!res.ok) {
             alert(yield res.text());
