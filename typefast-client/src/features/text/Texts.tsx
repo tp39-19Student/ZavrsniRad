@@ -1,19 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { adminOnlyEndpoint, userOnlyEndpoint, type User } from "../user/usersSlice";
-import { changeTextCategoryStart, deleteTextStart, getAllTextsStart, getCategoriesStart } from "./textsSlice";
+import { type Text, approveTextStart, changeTextCategoryStart, deleteTextStart, getApprovedTextsStart, getCategoriesStart, getPendingTextsStart } from "./textsSlice";
 import AddText from "./AddText";
+import { Link } from "react-router";
 
 
 export default function Texts() {
     const dispatch = useAppDispatch();
+    const user = useAppSelector(state => state.users.user) as User;
 
     useEffect(() => {
-        dispatch(getAllTextsStart());
+        dispatch(getApprovedTextsStart());
+        if (user.op == 1) dispatch(getPendingTextsStart());
     }, [dispatch]);
 
-    const texts = useAppSelector(state => state.texts.allTexts);
-    const user = useAppSelector(state => state.users.user) as User;
+    const texts = useAppSelector(state => state.texts.approvedTexts);
+    const pendingTexts = useAppSelector(state => state.texts.pendingTexts);
 
     const categories = useAppSelector(state => state.texts.allCategories);
 
@@ -21,44 +24,133 @@ export default function Texts() {
             dispatch(getCategoriesStart());
     }, [dispatch])
 
+    const [showPending, setShowPending] = useState(false);
+
+    const [filterText, setFilterText] = useState("");
+    const [filterCategory, setFilterCategory] = useState(0);
+    const [page, setPage] = useState(0);
+
+    const [sortBy, setSortBy] = useState("");
+    const [sortDirection, setSortDirection] = useState("");
+
+    const TEXTS_PER_PAGE = 5;
+
+    let displayedTexts = (showPending)?pendingTexts:texts;
+
+    if (filterCategory != 0) displayedTexts = displayedTexts.filter(t => t.category.idCat == filterCategory);
+    if (filterText.length > 0) displayedTexts = displayedTexts.filter(t => t.content.toLowerCase().includes(filterText.toLowerCase()));
+
+    const totalPages = Math.ceil(displayedTexts.length / TEXTS_PER_PAGE);
+
+    
+    if (sortBy.length > 0) {
+        displayedTexts = [...displayedTexts].sort((a, b) => {
+            let res = 0;
+            switch(sortBy.toLowerCase()) {
+                case "length": res = a.content.length - b.content.length; break;
+                case "text": res = a.content.localeCompare(b.content); break;
+                case "category": res = a.category.name.localeCompare(b.category.name); break;
+            }
+            return (sortDirection == "desc")?-res:res;
+        })
+    }
+    
+    displayedTexts = displayedTexts.slice(page * TEXTS_PER_PAGE, (page + 1) * TEXTS_PER_PAGE);
+
+    useEffect(() => {
+        if (totalPages > 0 && page >= totalPages) setPage(totalPages - 1);
+    }, [texts, pendingTexts])
+
+    const [modalText, setModalText] = useState<Text | null>(null);
+
     return (
         <div>
+            <div className="modal fade" id="textModal" tabIndex={-1}>
+                <div className="modal-dialog modal-dialog-scrollable">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">
+                                {modalText != null && ("Category: " + modalText.category.name + ", Length: " + modalText.content.length)}
+                            </h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            {modalText != null && modalText.content}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
             <button onClick={() => dispatch(userOnlyEndpoint())}>User only</button>
             <button onClick={() => dispatch(adminOnlyEndpoint())}>Admin only</button>
 
             <AddText />
 
             <h1>Texts</h1>
+            {user.op == 1 &&
+                <div>
+                    <button className="btn btn-primary" onClick={() => {setShowPending(false); setPage(0);}}>Approved Texts</button>
+                    <button className="btn btn-secondary" onClick={() => {setShowPending(true); setPage(0);}}>Pending Texts</button>
+                </div>
+            }
+            <div>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={filterText}
+                    onChange={(e) => {setFilterText(e.target.value); setPage(0);}}
+                />
 
+                <select
+                    value={filterCategory}
+                    onChange={(e) => {setFilterCategory(parseInt(e.target.value)); setPage(0);}}
+                >
+                    <option value={0}>All Categories</option>
+                    {categories.map(c =>
+                        <option key={c.idCat} value={c.idCat}>{c.name}</option>
+                    )}
+                </select>
+            </div>
             <table className="table">
                 <thead>
                     <tr>
-                        <th>Text</th>
-                        <th>Category</th>
-                        <th>Length</th>
+                        {["Text", "Category", "Length"].map(h =>
+                            <th
+                                key={h}
+                                onClick={() => changeSort(h)}
+                            >
+                                {h} 
+                                <img
+                                    src={getSortImg(h)}
+                                />
+                            </th>
+                        )}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {texts.map(t =>
+                    {(displayedTexts).map(t =>
                         <tr key={t.idTex}>
-                            <td>{t.content.substring(0, 50) + (t.content.length > 50?"...":"")}</td>
+                            <td
+                                data-bs-toggle="modal"
+                                data-bs-target="#textModal"
+                                onClick={() => setModalText(t)}
+                            >
+                                {t.content.substring(0, 50) + (t.content.length > 50?"...":"")}
+                            </td>
                             <td>{t.category.name}</td>
-                            <td>{t.idTex}</td>
+                            <td>{t.content.length}</td>
                             <td>
                                 {user.op == 0 &&
                                     <div>
-                                        <button className="btn btn-primary">Play</button>
+                                        <Link to={"/play/" + t.idTex} className="btn btn-primary">Play</Link>
                                     </div>
                                 }
                                 {user.op == 1 &&
                                     <div style={{display: "flex"}}>
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={() => dispatch(deleteTextStart(t.idTex))}
-                                        >
-                                                Delete
-                                        </button>
+                                        
                                         <div className="dropdown">
                                             <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Change Category
@@ -78,6 +170,20 @@ export default function Texts() {
                                                 )}
                                             </ul>
                                         </div>
+                                        {t.approved == false &&
+                                            <button
+                                                className="btn btn-success"
+                                                onClick={() => dispatch(approveTextStart(t.idTex))}
+                                            >
+                                                Approve
+                                            </button>
+                                        }
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={() => dispatch(deleteTextStart(t))}
+                                        >
+                                                Delete
+                                        </button>
                                     </div>
                                 }
                             </td>
@@ -85,7 +191,64 @@ export default function Texts() {
                     )}
                 </tbody>
             </table>
-          </div>
-        
+            {totalPages > 1 &&
+                <nav>
+                    <ul className="pagination">
+                        <li className="page-item">
+                            <a
+                                className={"page-link" + ((page == 0)?" disabled":"")}
+                                onClick={() => showPage(page - 1)}
+                            >
+                                Previous
+                            </a>
+                        </li>
+                        {[...Array(totalPages).keys()].map(i =>
+                            <li key={i} className="page-item">
+                                <a
+                                    className={"page-link" + ((page == i)?" active":"")}
+                                    onClick={() => showPage(i)}
+                                >
+                                    {i + 1}
+                                </a>
+                            </li>
+                        )}
+                        <li className="page-item">
+                            <a
+                                className={"page-link" + ((page == totalPages - 1)?" disabled":"")}
+                                onClick={() => showPage(page + 1)}
+                            >
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
     );
+
+    function showPage(page: number) {
+        if (page < 0 || page >= totalPages) return;
+        setPage(page);
+    }
+
+    function getSortImg(field: string): string {
+        if (sortBy != field) return "chevrons-up-down.svg";
+        
+        if (sortDirection == "asc") return "chevron-up.svg";
+        return "chevron-down.svg";
+    }
+
+    function changeSort(field: string) {
+        setPage(0);
+        if (field != sortBy) {
+            setSortBy(field);
+            setSortDirection("asc");
+        } else {
+            if (sortDirection == "asc") setSortDirection("desc");
+            else {
+                setSortBy("");
+                setSortDirection("");
+            }
+        }
+    }
 }

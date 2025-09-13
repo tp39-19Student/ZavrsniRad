@@ -21,12 +21,32 @@ namespace Typefast.Server.Controllers
             _textService = textService;
         }
 
+        [HttpGet]
+        [HttpGet("{idTex}")]
+        public async Task<ActionResult<Text>> Get(int idTex)
+        {
+            if (idTex == 0) return await _textService.GetRandom();
+            return await _textService.GetById(idTex);
+        }
 
         [HttpGet("getApproved")]
-        public async Task<List<Text>> GetAll()
+        public async Task<List<Text>> GetApproved()
         {
             var texts = await _textService.GetApproved();
             return texts;
+        }
+
+        [HttpPut("approve/{idTex}")]
+        public async Task<ActionResult<Text>> Approve(int idTex)
+        {
+            return await _textService.Approve(idTex);
+        }
+
+        [AdminOnly]
+        [HttpGet("getPending")]
+        public async Task<List<Text>> GetPending()
+        {
+            return await _textService.GetPending();
         }
 
         [HttpGet("categories")]
@@ -68,8 +88,7 @@ namespace Typefast.Server.Controllers
         [HttpPut("changeCategory/{idTex}/{idCat}")]
         public async Task<ActionResult<Text>> ChangeTextCategory(int idTex, int idCat)
         {
-            await _textService.changeCategory(idTex, idCat);
-            return await _textService.GetById(idTex);
+            return await _textService.ChangeCategory(idTex, idCat);
         }
     }
 }

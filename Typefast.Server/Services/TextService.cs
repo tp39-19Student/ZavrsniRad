@@ -12,6 +12,7 @@ namespace Typefast.Server.Services
     public class TextService
     {
         private readonly AppDbContext _db;
+        private readonly Random rand = new Random();
 
         public TextService(AppDbContext db)
         {
@@ -25,6 +26,22 @@ namespace Typefast.Server.Services
                 .Where(text => text.Approved == true)
                 .Include(text => text.Category)
                 .ToListAsync();
+        }
+
+        public async Task<List<Text>> GetPending()
+        {
+            return await _db.Texts
+                .Where(text => text.Approved == false)
+                .Include(text => text.Category)
+                .ToListAsync();
+        }
+
+        public async Task<Text> Approve(int idTex)
+        {
+            Text text = await GetById(idTex);
+            text.Approved = true;
+            await _db.SaveChangesAsync();
+            return text;
         }
 
         public async Task<Text> GetById(int id)
@@ -69,14 +86,23 @@ namespace Typefast.Server.Services
             return true;
         }
 
-        public async Task<bool> changeCategory(int idTex, int idCat)
+        public async Task<Text> ChangeCategory(int idTex, int idCat)
         {
             Text text = await GetById(idTex);
             Category cat = await GetCategoryById(idCat);
 
             text.IdCat = idCat;
             await _db.SaveChangesAsync();
-            return true;
+            return text;
+        }
+
+        public async Task<Text> GetRandom()
+        {
+            int count = await _db.Texts.CountAsync();
+            if (count == 0) throw new StatusException(StatusCodes.Status404NotFound, "There are no texts in the database");
+            int index = (int)Math.Floor(rand.NextDouble() * count);
+
+            return (await _db.Texts.Skip(index).FirstOrDefaultAsync())!;
         }
     }
 }

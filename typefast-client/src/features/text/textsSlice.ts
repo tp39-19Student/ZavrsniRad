@@ -13,14 +13,16 @@ export type Text = {
 }
 
 interface TextsState {
-    allTexts: Text[];
+    approvedTexts: Text[];
+    pendingTexts: Text[];
     allCategories: Category[];
     text: Text | null;
     submitState: number;
 }
 
 const initialState: TextsState = {
-    allTexts: [],
+    approvedTexts: [],
+    pendingTexts: [],
     allCategories: [],
     text: null,
     submitState: 0
@@ -41,11 +43,24 @@ const textsSlice = createSlice({
     name: "texts",
     initialState,
     reducers: {
-        getAllTextsStart: (_state) => {},
-        getAllTextsSuccess: (state, action: PayloadAction<Text[]>) => {
-            state.allTexts = action.payload;
+        getApprovedTextsStart: (_state) => {},
+        getApprovedTextsSuccess: (state, action: PayloadAction<Text[]>) => {
+            state.approvedTexts = action.payload;
         },
-        getAllTextsFailure: (_state) => {},
+        getApprovedTextsFailure: (_state) => {},
+
+        getPendingTextsStart: (_state) => {},
+        getPendingTextsSuccess: (state, action: PayloadAction<Text[]>) => {
+            state.pendingTexts = action.payload;
+        },
+        getPendingTextsFailure: (_state) => {},
+
+        approveTextStart: (_state, _action: PayloadAction<number>) => {},
+        approveTextSuccess: (state, action: PayloadAction<Text>) => {
+            state.pendingTexts = state.pendingTexts.filter(t => t.idTex != action.payload.idTex);
+            state.approvedTexts.push(action.payload);
+        },
+        approveTextFailure: () => {},
 
         getCategoriesStart: (_state) => {},
         getCategoriesSuccess: (state, action: PayloadAction<Category[]>) => {
@@ -57,15 +72,23 @@ const textsSlice = createSlice({
         submitTextSuccess: (state) => {state.submitState = 2;},
         submitTextFailure: (state) => {state.submitState = -1;},
 
-        deleteTextStart: (_state, _action: PayloadAction<number>) => {},
-        deleteTextSuccess: (state, action: PayloadAction<number>) => {
-            state.allTexts = state.allTexts.filter(t => t.idTex != action.payload);
+        deleteTextStart: (_state, _action: PayloadAction<Text>) => {},
+        deleteTextSuccess: (state, action: PayloadAction<Text>) => {
+            if (action.payload.approved == true)
+                state.approvedTexts = state.approvedTexts.filter(t => t.idTex != action.payload.idTex);
+            else
+                state.pendingTexts = state.pendingTexts.filter(t => t.idTex != action.payload.idTex);
         },
         deleteTextFailure: (_state) => {},
 
         changeTextCategoryStart: (_state, _action: PayloadAction<ChangeTextCategoryRequest>) => {},
         changeTextCategorySuccess: (state, action: PayloadAction<Text>) => {
-            var text = state.allTexts.find(t => t.idTex == action.payload.idTex);
+            let text;
+            if (action.payload.approved == true)
+                text = state.approvedTexts.find(t => t.idTex == action.payload.idTex);
+            else
+                text = state.pendingTexts.find(t => t.idTex == action.payload.idTex);
+
             if (text) text.category = action.payload.category;
         },
         changeTextCategoryFailure: (_state) => {},
@@ -76,7 +99,9 @@ const textsSlice = createSlice({
 export default textsSlice.reducer;
 
 export const {
-    getAllTextsStart, getAllTextsSuccess, getAllTextsFailure,
+    getApprovedTextsStart, getApprovedTextsSuccess, getApprovedTextsFailure,
+    getPendingTextsStart, getPendingTextsSuccess, getPendingTextsFailure,
+    approveTextStart, approveTextSuccess, approveTextFailure,
     getCategoriesStart, getCategoriesSuccess, getCategoriesFailure,
     submitTextStart, submitTextSuccess, submitTextFailure,
     deleteTextStart, deleteTextSuccess, deleteTextFailure,

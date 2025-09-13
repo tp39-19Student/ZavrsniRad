@@ -1,20 +1,65 @@
 import { put, takeEvery, call} from "redux-saga/effects"
-import { changeTextCategoryEndpoint, deleteTextEndpoint, getAllTextsEndpoint, getCategoriesEndpoint, submitTextEndpoint } from "../../constants/api";
-import { changeTextCategoryFailure, changeTextCategorySuccess, deleteTextFailure, deleteTextSuccess, getAllTextsFailure, getAllTextsSuccess, getCategoriesFailure, getCategoriesSuccess, submitTextFailure, submitTextSuccess, type ChangeTextCategoryRequest, type SubmitTextRequest } from "./textsSlice";
+import { 
+    approveTextEndpoint,
+    changeTextCategoryEndpoint,
+    deleteTextEndpoint,
+    getApprovedTextsEndpoint,
+    getCategoriesEndpoint,
+    getPendingTextsEndpoint,
+    submitTextEndpoint
+} from "../../constants/api";
+import { 
+    changeTextCategoryFailure, changeTextCategorySuccess,
+    deleteTextFailure, deleteTextSuccess,
+    getApprovedTextsFailure, getApprovedTextsSuccess,
+    getPendingTextsFailure, getPendingTextsSuccess,
+    getCategoriesFailure, getCategoriesSuccess,
+    submitTextFailure, submitTextSuccess,
+    type ChangeTextCategoryRequest, type SubmitTextRequest, type Text,
+    approveTextFailure,
+    approveTextSuccess
+} from "./textsSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 
-function* getAllTexts(): Generator {
+function* getApprovedTexts(): Generator {
     try {
-        const res = yield call(() => fetch(getAllTextsEndpoint));
+        const res = yield call(() => fetch(getApprovedTextsEndpoint));
 
         if (!res.ok) throw res;
 
         const json = yield res.json();
-        yield put(getAllTextsSuccess(json));
+        yield put(getApprovedTextsSuccess(json));
     } catch(e) {
         console.error(e);
-        yield put(getAllTextsFailure());
+        yield put(getApprovedTextsFailure());
+    }
+}
+
+function* getPendingTexts(): Generator {
+    try {
+        const res = yield call(() => fetch(getPendingTextsEndpoint));
+
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+        yield put(getPendingTextsSuccess(json));
+    } catch(e) {
+        console.error(e);
+        yield put(getPendingTextsFailure());
+    }
+}
+
+function* approveText(action: PayloadAction<number>): Generator {
+    try {
+        const res = yield call(() => fetch(approveTextEndpoint + action.payload + "/", {method: "PUT"}));
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+        yield put(approveTextSuccess(json));
+    } catch(e) {
+        console.error(e);
+        yield put(approveTextFailure());
     }
 }
 
@@ -49,9 +94,9 @@ function* submitText(action: PayloadAction<SubmitTextRequest>): Generator {
     }
 }
 
-function* deleteText(action: PayloadAction<number>): Generator {
+function* deleteText(action: PayloadAction<Text>): Generator {
     try {
-        const res = yield call(() => fetch(deleteTextEndpoint + action.payload, {
+        const res = yield call(() => fetch(deleteTextEndpoint + action.payload.idTex, {
             method: "DELETE"
         }));
         if (!res.ok) throw res;
@@ -79,7 +124,9 @@ function* changeTextCategory(action: PayloadAction<ChangeTextCategoryRequest>): 
 }
 
 function* textsSaga() {
-    yield takeEvery("texts/getAllTextsStart", getAllTexts);
+    yield takeEvery("texts/getApprovedTextsStart", getApprovedTexts);
+    yield takeEvery("texts/getPendingTextsStart", getPendingTexts);
+    yield takeEvery("texts/approveTextStart", approveText);
     yield takeEvery("texts/getCategoriesStart", getCategories);
     yield takeEvery("texts/submitTextStart", submitText);
     yield takeEvery("texts/deleteTextStart", deleteText);
