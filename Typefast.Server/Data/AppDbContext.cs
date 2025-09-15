@@ -28,7 +28,11 @@ namespace Typefast.Server.Data
             .HasForeignKey(t => t.IdCat)
             .HasPrincipalKey(c => c.IdCat);
 
-
+            modelBuilder.Entity<Person>()
+            .HasMany(p => p.Scores)
+            .WithOne(s => s.User)
+            .HasForeignKey(s => s.IdPer)
+            .HasPrincipalKey(p => p.IdPer);
         }
     }
 }

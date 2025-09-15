@@ -47,9 +47,9 @@ CREATE TABLE Score
 	idSco		INTEGER NOT NULL AUTO_INCREMENT,
 	idPer		INTEGER NOT NULL,
 	idTex		INTEGER NOT NULL,
-	datePlayed	INTEGER NULL,
-	time		FLOAT NULL,
-	accuracy	FLOAT NULL,
+	datePlayed	DATE NULL,
+	time		DOUBLE NULL,
+	accuracy	DOUBLE NULL,
 	PRIMARY KEY (idSco)
 ) ENGINE=InnoDB;
 

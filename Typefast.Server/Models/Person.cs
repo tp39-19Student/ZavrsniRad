@@ -19,5 +19,7 @@ namespace Typefast.Server.Models
 
         public string? BlReason { get; set; }
         public int BlUntil { get; set; }
+
+        public ICollection<Score> Scores { get; set; } = new List<Score>();
     }
 }

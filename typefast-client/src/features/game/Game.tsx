@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getTextStart } from "./gameSlice";
+import { getLeaderboardStart, getTextStart, submitScoreStart, type Score } from "./gameSlice";
 import { type Text } from "../text/textsSlice";
 
 import "./Game.css"
@@ -12,6 +12,8 @@ export default function Game() {
     const {id} = useParams();
 
     const text = useAppSelector(state => state.game.text) as Text;
+    const scores = useAppSelector(state => state.game.scores);
+    const user = useAppSelector(state => state.users.user);
 
     useEffect(() => {
         dispatch(getTextStart(id?parseInt(id):0));
@@ -41,6 +43,12 @@ export default function Game() {
         if (started && correctCursor == text.content.length) {
             setFinished(true);
             clearInterval(timerHandle);
+
+            dispatch(submitScoreStart({
+                idTex: text.idTex,
+                time: time,
+                accuracy: calcAccuracy()
+            }))
         }
     }, [cursor])
 
@@ -54,7 +62,10 @@ export default function Game() {
     useEffect(() => {
         if (text == null) return;
         mistakeFlags.current = Array(text.content.length).fill(false);
+        dispatch(getLeaderboardStart(text.idTex));
     }, [text])
+
+    const sortedScores = [...scores].sort((a,b) => a.time - b.time);
 
     return (
         <>
@@ -72,6 +83,26 @@ export default function Game() {
                     </p>
                 </div>
             }
+
+            <h1>Scores</h1>
+            <table id="leaderboard" className="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Time</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {sortedScores.map(s =>
+                        <tr key={s.idSco} className={scoreClass(s)}>
+                            <td>{s.user.username}</td>
+                            <td>{s.time.toFixed(2)}</td>
+                            <td>{(s.accuracy * 100).toFixed(2)}%</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
         </>
     );
 
@@ -122,5 +153,11 @@ export default function Game() {
 
         if (mistakes >= total) return 0;
         return ((total - mistakes) / total);
+    }
+
+    function scoreClass(score: Score) {
+        if (score.current) return "table-success";
+        if (score.user.username == user?.username) return "table-warning";
+        return ""
     }
 }

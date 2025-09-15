@@ -12,8 +12,10 @@ namespace Typefast.Server.Models
         public int IdSco { get; set; }
         public int IdPer { get; set; }
         public int IdTex { get; set; }
-        public int DatePlayed { get; set; }
-        public float Time { get; set; }
-        public float Accuracy { get; set; }
+        public DateOnly DatePlayed { get; set; }
+        public double Time { get; set; }
+        public double Accuracy { get; set; }
+
+        public Person User { get; set; }
     }
 }
