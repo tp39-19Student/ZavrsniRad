@@ -2,7 +2,10 @@
 
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Typefast.Server.Controllers;
 using Typefast.Server.Data;
+using Typefast.Server.Data.DTOs;
+using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 
 namespace Typefast.Server.Services
@@ -16,9 +19,12 @@ namespace Typefast.Server.Services
             _db = db;
         }
 
-        public async Task<Person?> GetById(int id)
+        public async Task<Person> GetById(int id)
         {
-            return await _db.People.FirstOrDefaultAsync(u => u.IdPer == id);
+            Person? user = await _db.People.FirstOrDefaultAsync(u => u.IdPer == id);
+            if (user == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no user with id: " + id);
+
+            return user;
         }
 
         public async Task<Person?> GetByUsername(string username)

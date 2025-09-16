@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Typefast.Server.Data.DTOs;
 using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 using Typefast.Server.Services;
@@ -55,11 +56,7 @@ namespace Typefast.Server.Controllers
             return await _textService.GetCategories();
         }
 
-        public class SubmitTextRequest
-        {
-            public required string Text { get; set; }
-            public required int IdCat { get; set; }
-        }
+
 
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitText(SubmitTextRequest req, UserContainer userContainer)
@@ -89,6 +86,13 @@ namespace Typefast.Server.Controllers
         public async Task<ActionResult<Text>> ChangeTextCategory(int idTex, int idCat)
         {
             return await _textService.ChangeCategory(idTex, idCat);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{idTex}/scores")]
+        public async Task<Score[]> GetScores(int idTex)
+        {
+            return await _textService.GetScores(idTex);
         }
     }
 }

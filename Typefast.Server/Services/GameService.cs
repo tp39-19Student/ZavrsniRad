@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
+using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 
 namespace Typefast.Server.Services
@@ -8,10 +9,12 @@ namespace Typefast.Server.Services
     public class GameService
     {
         private readonly AppDbContext _db;
+        private readonly TextService _textService;
 
-        public GameService(AppDbContext db)
+        public GameService(AppDbContext db, TextService textService)
         {
             _db = db;
+            _textService = textService;
         }
 
 
@@ -21,6 +24,20 @@ namespace Typefast.Server.Services
             await _db.SaveChangesAsync();
 
             return score;
+        }
+
+        public async Task DeleteScore(int idSco)
+        {
+            var score = _db.Scores.FirstOrDefault(s => s.IdSco == idSco);
+            if (score == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no score with id " + idSco);
+
+            _db.Scores.Remove(score);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Score[]> GetScores(Person user)
+        {
+            return (await _db.People.Include(p => p.Scores).FirstAsync(u => u.IdPer == user.IdPer)).Scores.ToArray();
         }
 
         public async Task<List<Score>> GetLeaderboard(int idTex)
@@ -45,5 +62,7 @@ namespace Typefast.Server.Services
             .Include(s => s.User)
             .ToListAsync();
         }
+
+        
     }
 }

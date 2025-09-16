@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Typefast.Server.Models
 {
@@ -17,5 +18,10 @@ namespace Typefast.Server.Models
         public double Accuracy { get; set; }
 
         public Person User { get; set; }
+        
+        [JsonIgnore]
+        public Text Text { get; set; }
+
+        public double Wpm { get; set; }
     }
 }

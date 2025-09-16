@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { Score } from "../game/gameSlice";
 
 export type Category = {
     idCat: number;
@@ -17,6 +18,7 @@ interface TextsState {
     pendingTexts: Text[];
     allCategories: Category[];
     text: Text | null;
+    scores: Score[];
     submitState: number;
 }
 
@@ -25,6 +27,7 @@ const initialState: TextsState = {
     pendingTexts: [],
     allCategories: [],
     text: null,
+    scores: [],
     submitState: 0
 }
 
@@ -92,6 +95,18 @@ const textsSlice = createSlice({
             if (text) text.category = action.payload.category;
         },
         changeTextCategoryFailure: (_state) => {},
+
+        getScoresForTextStart: (_state, action: PayloadAction<number>) => {},
+        getScoresForTextSuccess: (state, action: PayloadAction<Score[]>) => {
+            state.scores = action.payload
+        },
+        getScoresForTextFailure: (_state) => {},
+
+        deleteScoreStart: (_state, _action: PayloadAction<number>) => {},
+        deleteScoreSuccess: (state, action: PayloadAction<number>) => {
+            state.scores = state.scores.filter(s => s.idSco != action.payload);
+        },
+        deleteScoreFailure: (_state) => {},
     }
 });
 
@@ -105,5 +120,7 @@ export const {
     getCategoriesStart, getCategoriesSuccess, getCategoriesFailure,
     submitTextStart, submitTextSuccess, submitTextFailure,
     deleteTextStart, deleteTextSuccess, deleteTextFailure,
-    changeTextCategoryStart, changeTextCategorySuccess, changeTextCategoryFailure
+    changeTextCategoryStart, changeTextCategorySuccess, changeTextCategoryFailure,
+    getScoresForTextStart, getScoresForTextSuccess, getScoresForTextFailure,
+    deleteScoreStart, deleteScoreSuccess, deleteScoreFailure
 } = textsSlice.actions;

@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type User = {
+    idPer: number;
     username: string;
     op: number;
     gold: number;

@@ -19,10 +19,11 @@ export default function Navbar() {
                         </li>
                     </ul>
                     <div>
-                        {user != null && <div>
+                        {user != null && <>
+                            <NavLink to={"/profile/" + user.idPer} className="nav-link">Profile</NavLink>
                             <span>Logged in as {user?.username}</span>
                             <button onClick={() => dispatch(logoutStart())}>Logout</button> 
-                        </div>}
+                        </>}
                     </div>
                 </div>
             </div>

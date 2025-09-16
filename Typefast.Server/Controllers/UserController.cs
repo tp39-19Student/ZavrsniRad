@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
+using Typefast.Server.Data.DTOs;
 using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 using Typefast.Server.Services;

@@ -4,6 +4,9 @@ import { adminOnlyEndpoint, userOnlyEndpoint, type User } from "../user/usersSli
 import { type Text, approveTextStart, changeTextCategoryStart, deleteTextStart, getApprovedTextsStart, getCategoriesStart, getPendingTextsStart } from "./textsSlice";
 import AddText from "./AddText";
 import { Link } from "react-router";
+import TextScores from "./TextScores";
+import Pagination from "../../components/Pagination";
+import { Modal } from "react-bootstrap";
 
 
 export default function Texts() {
@@ -62,24 +65,35 @@ export default function Texts() {
     }, [texts, pendingTexts])
 
     const [modalText, setModalText] = useState<Text | null>(null);
+    const [showModalText, setshowModalText] = useState(false);
+
+    const [modalScores, setModalScores] = useState<Text | null>(null)
+    const [showModalScores, setShowModalScores] = useState(false);
 
     return (
         <div>
-            <div className="modal fade" id="textModal" tabIndex={-1}>
-                <div className="modal-dialog modal-dialog-scrollable">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">
-                                {modalText != null && ("Category: " + modalText.category.name + ", Length: " + modalText.content.length)}
-                            </h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            {modalText != null && modalText.content}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Modal show={showModalText} onHide={() => setshowModalText(false)} scrollable>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {modalText != null && ("Category: " + modalText.category.name + ", Length: " + modalText.content.length)}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {modalText != null && modalText.content}
+                </Modal.Body>
+            </Modal>
+
+
+            <Modal show={showModalScores} onHide={() => setShowModalScores(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {modalScores != null && ("Category: " + modalScores.category.name + ", Length: " + modalScores.content.length)}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {modalScores != null && <TextScores idTex={modalScores.idTex} />}
+                </Modal.Body>
+            </Modal>
 
 
 
@@ -134,9 +148,10 @@ export default function Texts() {
                     {(displayedTexts).map(t =>
                         <tr key={t.idTex}>
                             <td
-                                data-bs-toggle="modal"
-                                data-bs-target="#textModal"
-                                onClick={() => setModalText(t)}
+                                onClick={() => {
+                                    setModalText(t);
+                                    setshowModalText(true);
+                                }}
                             >
                                 {t.content.substring(0, 50) + (t.content.length > 50?"...":"")}
                             </td>
@@ -170,12 +185,22 @@ export default function Texts() {
                                                 )}
                                             </ul>
                                         </div>
-                                        {t.approved == false &&
+                                        {t.approved == false?
                                             <button
                                                 className="btn btn-success"
                                                 onClick={() => dispatch(approveTextStart(t.idTex))}
                                             >
                                                 Approve
+                                            </button>
+                                            :
+                                            <button
+                                                className="btn btn-warning"
+                                                onClick={() => {
+                                                    setModalScores(t);
+                                                    setShowModalScores(true);
+                                                }}
+                                            >
+                                                Scores
                                             </button>
                                         }
                                         <button
@@ -191,38 +216,11 @@ export default function Texts() {
                     )}
                 </tbody>
             </table>
-            {totalPages > 1 &&
-                <nav>
-                    <ul className="pagination">
-                        <li className="page-item">
-                            <a
-                                className={"page-link" + ((page == 0)?" disabled":"")}
-                                onClick={() => showPage(page - 1)}
-                            >
-                                Previous
-                            </a>
-                        </li>
-                        {[...Array(totalPages).keys()].map(i =>
-                            <li key={i} className="page-item">
-                                <a
-                                    className={"page-link" + ((page == i)?" active":"")}
-                                    onClick={() => showPage(i)}
-                                >
-                                    {i + 1}
-                                </a>
-                            </li>
-                        )}
-                        <li className="page-item">
-                            <a
-                                className={"page-link" + ((page == totalPages - 1)?" disabled":"")}
-                                onClick={() => showPage(page + 1)}
-                            >
-                                Next
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            }
+            <Pagination 
+                current={page}
+                total={totalPages}
+                onPageChange={showPage}
+            />
         </div>
     );
 

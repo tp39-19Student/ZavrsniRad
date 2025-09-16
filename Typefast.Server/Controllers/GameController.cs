@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using Typefast.Server.Data.DTOs;
 using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 using Typefast.Server.Services;
@@ -16,18 +17,13 @@ namespace Typefast.Server.Controllers
     {
         private readonly TextService _textService;
         private readonly GameService _gameService;
+        private readonly UserService _userService;
 
-        public GameController(TextService textService, GameService gameService)
+        public GameController(TextService textService, GameService gameService, UserService userService)
         {
             _textService = textService;
             _gameService = gameService;
-        }
-
-        public class SubmitScoreRequest
-        {
-            public required int IdTex { get; set; }
-            public required float Time { get; set; }
-            public required float Accuracy { get; set; }
+            _userService = userService;
         }
 
         [UserOnly]
@@ -43,8 +39,17 @@ namespace Typefast.Server.Controllers
             score.Time = req.Time;
             score.Accuracy = req.Accuracy;
             score.DatePlayed = DateOnly.FromDateTime(DateTime.Now);
+            score.Wpm = (text.Content.Length / 5.0) * (60.0 / req.Time);
             await _gameService.AddScore(score);
             return score;
+        }
+
+        [AdminOnly]
+        [HttpDelete("deleteScore/{idSco}")]
+        public async Task<IActionResult> DeleteScore(int idSco)
+        {
+            await _gameService.DeleteScore(idSco);
+            return NoContent();
         }
 
         [AllowAnonymous]
@@ -52,6 +57,21 @@ namespace Typefast.Server.Controllers
         public async Task<List<Score>> GetLeaderboard(int idTex)
         {
             return await _gameService.GetLeaderboard(idTex);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("profile/{idPer}")]
+        public async Task<GetProfileResponse> GetProfile(int idPer, UserContainer userContainer)
+        {
+            Person user = await _userService.GetById(idPer);
+            if (user.Op == 1) throw new StatusException(StatusCodes.Status400BadRequest, "Admin users don't have profiles");
+
+            
+
+            return new GetProfileResponse
+            {
+                User = user
+            };
         }
     }
 }

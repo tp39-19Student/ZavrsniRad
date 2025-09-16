@@ -5,6 +5,7 @@ import { getLeaderboardStart, getTextStart, submitScoreStart, type Score } from 
 import { type Text } from "../text/textsSlice";
 
 import "./Game.css"
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 
 export default function Game() {
@@ -12,7 +13,7 @@ export default function Game() {
     const {id} = useParams();
 
     const text = useAppSelector(state => state.game.text) as Text;
-    const scores = useAppSelector(state => state.game.scores);
+    const leaderboard = useAppSelector(state => state.game.leaderboard);
     const user = useAppSelector(state => state.users.user);
 
     useEffect(() => {
@@ -31,6 +32,25 @@ export default function Game() {
     const [started, setStarted] = useState(false);
     const [finished, setFinished] = useState(false);
 
+    interface GraphNode {
+        time: number;
+        wpm: number;
+        accuracy: number;
+    };
+
+    const graph = useRef<GraphNode[]>([{time: 0, wpm: 0, accuracy: 100}]);
+    const n = useRef(0);
+
+    useEffect(() => {
+        if (time > 0) {
+            n.current++;
+            if (n.current == 25) {
+                n.current = 0;
+                graphCapture();
+            }
+        }
+    }, [time]);
+
     useEffect(() => {
         if (!started && cursor > 0) {
             setStarted(true);
@@ -43,6 +63,8 @@ export default function Game() {
         if (started && correctCursor == text.content.length) {
             setFinished(true);
             clearInterval(timerHandle);
+
+            graphCapture();
 
             dispatch(submitScoreStart({
                 idTex: text.idTex,
@@ -65,7 +87,7 @@ export default function Game() {
         dispatch(getLeaderboardStart(text.idTex));
     }, [text])
 
-    const sortedScores = [...scores].sort((a,b) => a.time - b.time);
+    const sortedLeaderboard = [...leaderboard].sort((a,b) => a.time - b.time);
 
     return (
         <>
@@ -94,7 +116,7 @@ export default function Game() {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedScores.map(s =>
+                    {sortedLeaderboard.map(s =>
                         <tr key={s.idSco} className={scoreClass(s)}>
                             <td>{s.user.username}</td>
                             <td>{s.time.toFixed(2)}</td>
@@ -103,6 +125,19 @@ export default function Game() {
                     )}
                 </tbody>
             </table>
+            {finished &&
+                <>
+                    <LineChart data={graph.current} width={800} height={300} margin={{ top: 25, right: 25, bottom: 25, left: 25 }}>
+                        <Line dataKey="wpm" stroke="blue" />
+                        <Line dataKey="accuracy" stroke="red" />
+                        <YAxis padding={{top: 25}} />
+                        <XAxis dataKey="time" type="number" domain={[0,0]}/>
+                        <Legend />
+                        <CartesianGrid />
+                        <Tooltip />
+                    </LineChart>
+                </>
+            }
         </>
     );
 
@@ -157,7 +192,15 @@ export default function Game() {
 
     function scoreClass(score: Score) {
         if (score.current) return "table-success";
-        if (score.user.username == user?.username) return "table-warning";
+        if (score.user.idPer == user?.idPer) return "table-warning";
         return ""
+    }
+
+    function graphCapture() {
+        graph.current.push({
+            time: (Math.ceil(time * 100) / 100),
+            wpm: (Math.ceil(calcWpm() * 100) / 100),
+            accuracy: (Math.ceil(calcAccuracy() * 10000) / 100)
+        });
     }
 }

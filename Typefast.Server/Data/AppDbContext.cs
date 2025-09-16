@@ -23,16 +23,22 @@ namespace Typefast.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>()
-            .HasMany(c => c.Texts)
-            .WithOne(t => t.Category)
-            .HasForeignKey(t => t.IdCat)
-            .HasPrincipalKey(c => c.IdCat);
+            .HasMany(category => category.Texts)
+            .WithOne(text => text.Category)
+            .HasForeignKey(text => text.IdCat)
+            .HasPrincipalKey(category => category.IdCat);
 
             modelBuilder.Entity<Person>()
-            .HasMany(p => p.Scores)
-            .WithOne(s => s.User)
-            .HasForeignKey(s => s.IdPer)
-            .HasPrincipalKey(p => p.IdPer);
+            .HasMany(person => person.Scores)
+            .WithOne(score => score.User)
+            .HasForeignKey(score => score.IdPer)
+            .HasPrincipalKey(person => person.IdPer);
+
+            modelBuilder.Entity<Text>()
+            .HasMany(text => text.Scores)
+            .WithOne(score => score.Text)
+            .HasForeignKey(score => score.IdTex)
+            .HasPrincipalKey(text => text.IdTex);
         }
     }
 }

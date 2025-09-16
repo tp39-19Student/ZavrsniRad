@@ -64,7 +64,7 @@ export default function AddText() {
     );
 
     function submitText() {
-        if (text.length == 0) return;
+        if (text.length <= 1) return;
 
         dispatch(submitTextStart({
             idCat: selectedCategory,

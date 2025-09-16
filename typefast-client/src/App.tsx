@@ -7,6 +7,8 @@ import { useAppDispatch } from './hooks'
 import { adminOnlyEndpoint, getUserStart, userOnlyEndpoint } from './features/user/usersSlice'
 import Texts from './features/text/Texts'
 import Game from './features/game/Game'
+import Profile from './features/game/Profile'
+import Block from './features/user/Block'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -25,6 +27,12 @@ function App() {
       }></Route>
       <Route path='/play/:id?' element={
         <AuthRoute role={0}><Game /></AuthRoute>
+      }></Route>
+      <Route path='profile/:id?' element={
+        <AuthRoute role={2}><Profile /></AuthRoute>
+      }></Route>
+      <Route path='/block/:id' element={
+        <AuthRoute role={1}><Block /></AuthRoute>
       }></Route>
     </Routes>
   </React.Fragment>

@@ -50,6 +50,7 @@ CREATE TABLE Score
 	datePlayed	DATE NULL,
 	time		DOUBLE NULL,
 	accuracy	DOUBLE NULL,
+	wpm			DOUBLE NULL,
 	PRIMARY KEY (idSco)
 ) ENGINE=InnoDB;
 

@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Typefast.Server.Models
 {
@@ -11,6 +12,7 @@ namespace Typefast.Server.Models
         [Key]
         public int IdPer { get; set; }
         public string? Username { get; set; }
+        [JsonIgnore]
         public string? Password { get; set; }
         public int Op { get; set; }
         public int Gold { get; set; }
@@ -20,6 +22,7 @@ namespace Typefast.Server.Models
         public string? BlReason { get; set; }
         public int BlUntil { get; set; }
 
+        [JsonIgnore]
         public ICollection<Score> Scores { get; set; } = new List<Score>();
     }
 }

@@ -10,6 +10,7 @@ export type Score = {
     datePlayed: number;
     time: number;
     accuracy: number;
+    wpm: number;
 
     user: User;
 
@@ -18,12 +19,12 @@ export type Score = {
 
 interface GameState {
     text: Text | null;
-    scores: Score[];
+    leaderboard: Score[];
 }
 
 const initialState: GameState = {
     text: null,
-    scores: []
+    leaderboard: []
 }
 
 export interface SubmitScoreRequest {
@@ -45,13 +46,13 @@ const gameSlice = createSlice({
         submitScoreStart: (_state, _action: PayloadAction<SubmitScoreRequest>) => {},
         submitScoreSuccess: (state, action: PayloadAction<Score>) => {
             action.payload.current = true;
-            state.scores.push(action.payload);
+            state.leaderboard.push(action.payload);
         },
         submitScoreFailure: (_state) => {},
 
         getLeaderboardStart: (_state, _action: PayloadAction<number>) => {},
         getLeaderboardSuccess: (state, action: PayloadAction<Score[]>) => {
-            state.scores = action.payload;
+            state.leaderboard = action.payload;
         },
         getLeaderboardFailure: (_state) => {},
     }

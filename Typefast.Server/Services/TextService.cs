@@ -104,5 +104,13 @@ namespace Typefast.Server.Services
 
             return (await _db.Texts.Skip(index).FirstOrDefaultAsync())!;
         }
+
+        public async Task<Score[]> GetScores(int idTex)
+        {
+            var text = await _db.Texts.Include(t => t.Scores).ThenInclude(s => s.User).FirstOrDefaultAsync(t => t.IdTex == idTex);
+            if (text == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no text with id " + idTex);
+
+            return text.Scores.ToArray();
+        }
     }
 }

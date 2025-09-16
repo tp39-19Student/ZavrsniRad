@@ -1,11 +1,13 @@
-import { put, takeEvery, call} from "redux-saga/effects"
+import { put, takeEvery, call, take} from "redux-saga/effects"
 import { 
     approveTextEndpoint,
     changeTextCategoryEndpoint,
+    deleteScoreEndpoint,
     deleteTextEndpoint,
     getApprovedTextsEndpoint,
     getCategoriesEndpoint,
     getPendingTextsEndpoint,
+    getTextEndpoint,
     submitTextEndpoint
 } from "../../constants/api";
 import { 
@@ -17,7 +19,11 @@ import {
     submitTextFailure, submitTextSuccess,
     type ChangeTextCategoryRequest, type SubmitTextRequest, type Text,
     approveTextFailure,
-    approveTextSuccess
+    approveTextSuccess,
+    getScoresForTextSuccess,
+    getScoresForTextFailure,
+    deleteScoreSuccess,
+    deleteScoreFailure
 } from "./textsSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -110,8 +116,7 @@ function* deleteText(action: PayloadAction<Text>): Generator {
 function* changeTextCategory(action: PayloadAction<ChangeTextCategoryRequest>): Generator {
     try {
         const res = yield call(() => fetch(changeTextCategoryEndpoint + action.payload.idTex + "/" + action.payload.idCat + "/", {
-            method: "PUT",
-            credentials: "include"
+            method: "PUT"
         }));
         if (!res.ok) throw res;
 
@@ -123,6 +128,31 @@ function* changeTextCategory(action: PayloadAction<ChangeTextCategoryRequest>): 
     }
 }
 
+function* getScoresForText(action: PayloadAction<number>): Generator {
+    try {
+        const res = yield call(() => fetch(getTextEndpoint + action.payload + "/scores/"));
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+        yield put(getScoresForTextSuccess(json));
+    } catch(e) {
+        console.error(e);
+        yield put(getScoresForTextFailure());
+    }
+}
+
+function* deleteScore(action: PayloadAction<number>): Generator {
+    try {
+        const res = yield call(() => fetch(deleteScoreEndpoint + action.payload + "/", {method: "DELETE"}));
+        if (!res.ok) throw res;
+
+        yield put(deleteScoreSuccess(action.payload));
+    } catch(e) {
+        console.error(e);
+        yield put(deleteScoreFailure());
+    }
+}
+
 function* textsSaga() {
     yield takeEvery("texts/getApprovedTextsStart", getApprovedTexts);
     yield takeEvery("texts/getPendingTextsStart", getPendingTexts);
@@ -131,6 +161,8 @@ function* textsSaga() {
     yield takeEvery("texts/submitTextStart", submitText);
     yield takeEvery("texts/deleteTextStart", deleteText);
     yield takeEvery("texts/changeTextCategoryStart", changeTextCategory);
+    yield takeEvery("texts/getScoresForTextStart", getScoresForText);
+    yield takeEvery("texts/deleteScoreStart", deleteScore);
 }
 
 
