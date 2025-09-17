@@ -7,7 +7,7 @@ export type Score = {
     idPer: number;
     idTex: number;
 
-    datePlayed: number;
+    datePlayed: string;
     time: number;
     accuracy: number;
     wpm: number;

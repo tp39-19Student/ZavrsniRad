@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
+using Typefast.Server.Data.DTOs;
 using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 

@@ -18,3 +18,8 @@ export const getTextEndpoint = "/api/text/";
 export const submitScoreEndpoint = "/api/game/submitScore/"
 export const deleteScoreEndpoint = "/api/game/deleteScore/"
 export const leaderboardEndpoint = "/api/game/leaderboard/"
+
+
+
+export const getProfileEndpoint = "/api/profile/"
+export const getProfileStatsEndpoint = "/api/profile/stats/"

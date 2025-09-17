@@ -58,20 +58,5 @@ namespace Typefast.Server.Controllers
         {
             return await _gameService.GetLeaderboard(idTex);
         }
-
-        [AllowAnonymous]
-        [HttpGet("profile/{idPer}")]
-        public async Task<GetProfileResponse> GetProfile(int idPer, UserContainer userContainer)
-        {
-            Person user = await _userService.GetById(idPer);
-            if (user.Op == 1) throw new StatusException(StatusCodes.Status400BadRequest, "Admin users don't have profiles");
-
-            
-
-            return new GetProfileResponse
-            {
-                User = user
-            };
-        }
     }
 }

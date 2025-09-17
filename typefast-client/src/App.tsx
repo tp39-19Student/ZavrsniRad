@@ -7,7 +7,7 @@ import { useAppDispatch } from './hooks'
 import { adminOnlyEndpoint, getUserStart, userOnlyEndpoint } from './features/user/usersSlice'
 import Texts from './features/text/Texts'
 import Game from './features/game/Game'
-import Profile from './features/game/Profile'
+import Profile from './features/profile/Profile'
 import Block from './features/user/Block'
 
 function App() {

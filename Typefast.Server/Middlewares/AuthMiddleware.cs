@@ -1,6 +1,7 @@
 
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
 using Typefast.Server.Services;
 
@@ -28,7 +29,7 @@ namespace Typefast.Server.Middleware
             if (id != null)
             {
                 var _db = context.RequestServices.GetRequiredService<AppDbContext>();
-                var user = _db.People.FirstOrDefault(u => u.IdPer == int.Parse(id));
+                var user = _db.People.Include(p => p.Followed).FirstOrDefault(u => u.IdPer == int.Parse(id));
                 if (user != null) userContainer.User = user;
             }
 

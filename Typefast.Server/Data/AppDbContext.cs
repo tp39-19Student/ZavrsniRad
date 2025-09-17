@@ -39,6 +39,13 @@ namespace Typefast.Server.Data
             .WithOne(score => score.Text)
             .HasForeignKey(score => score.IdTex)
             .HasPrincipalKey(text => text.IdTex);
+
+            modelBuilder.Entity<Person>()
+            .HasMany(e => e.Followers)
+            .WithMany(e => e.Followed)
+            .UsingEntity<Follows>(
+                r => r.HasOne<Person>().WithMany().HasForeignKey(f => f.IdFer),
+                d => d.HasOne<Person>().WithMany().HasForeignKey(f => f.IdFed));
         }
     }
 }

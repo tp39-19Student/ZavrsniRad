@@ -113,6 +113,7 @@ export default function Game() {
                         <th>User</th>
                         <th>Time</th>
                         <th>Accuracy</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,6 +122,7 @@ export default function Game() {
                             <td>{s.user.username}</td>
                             <td>{s.time.toFixed(2)}</td>
                             <td>{(s.accuracy * 100).toFixed(2)}%</td>
+                            <td>{new Date(s.datePlayed).toLocaleDateString()}</td>
                         </tr>
                     )}
                 </tbody>

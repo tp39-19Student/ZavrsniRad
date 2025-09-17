@@ -24,5 +24,11 @@ namespace Typefast.Server.Models
 
         [JsonIgnore]
         public ICollection<Score> Scores { get; set; } = new List<Score>();
+
+        [JsonIgnore]
+        public ICollection<Person> Followers { get; set; } = new List<Person>();
+
+        public ICollection<Person> Followed { get; set; } = new List<Person>();
+
     }
 }

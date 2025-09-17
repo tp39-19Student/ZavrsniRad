@@ -21,7 +21,7 @@ namespace Typefast.Server.Services
 
         public async Task<Person> GetById(int id)
         {
-            Person? user = await _db.People.FirstOrDefaultAsync(u => u.IdPer == id);
+            Person? user = await _db.People.Include(u => u.Followed).FirstOrDefaultAsync(u => u.IdPer == id);
             if (user == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no user with id: " + id);
 
             return user;
@@ -29,7 +29,7 @@ namespace Typefast.Server.Services
 
         public async Task<Person?> GetByUsername(string username)
         {
-            return await _db.People.FirstOrDefaultAsync(u => u.Username == username);
+            return await _db.People.Include(p => p.Followed).FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<Boolean> Add(Person user)

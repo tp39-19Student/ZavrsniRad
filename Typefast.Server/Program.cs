@@ -35,6 +35,7 @@ builder.Services.AddScoped<UserContainer>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TextService>();
 builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<ProfileService>();
 
 var app = builder.Build();
 
