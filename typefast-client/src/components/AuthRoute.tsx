@@ -2,6 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import { useAppSelector } from "../hooks";
 import Login from "../features/user/Login";
 import Register from "../features/user/Register";
+import MultiButton from "./Multibutton";
 
 interface AuthRouteProps {
     role: number;
@@ -11,31 +12,24 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
     const lrState = useAppSelector(state => state.users.lrState);
 
     const user = useAppSelector(state => state.users.user);
-    const [showLogin, setShowLogin] = useState(true);
+    const [selected, setSelected] = useState(0);
 
     const [username, setUsername] = useState("");
 
     useEffect(() => {
         if (lrState == 2) {
-            setShowLogin(true);
+            setSelected(0);
         }
     }, [lrState])
 
     if (user == null) return (
         <div>
-            <button
-            className={"btn " + (showLogin?"btn-primary":"btn-secondary")}
-            onClick={() => setShowLogin(true)}
-            >
-                Login
-            </button>
-            <button
-            className={"btn " + (!showLogin?"btn-primary":"btn-secondary")}
-            onClick={() => setShowLogin(false)}
-            >
-                Register
-            </button>
-            {showLogin? 
+            <MultiButton 
+                vals={["Login", "Register"]}
+                onSelect={setSelected}
+                selected={selected}
+            />
+            {selected == 0? 
             <Login
                 username = {username}
                 onChange = {handleUsernameChange}

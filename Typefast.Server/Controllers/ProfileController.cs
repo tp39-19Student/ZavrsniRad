@@ -24,25 +24,46 @@ namespace Typefast.Server.Controllers
         }
 
         [HttpGet("{idPer}")]
-        public async Task<ActionResult<Person>> GetProfile(int idPer, UserContainer userContainer)
+        public async Task<ActionResult<GetProfileResponse>> GetProfile(int idPer, UserContainer userContainer)
         {
-            if (idPer == 0) return userContainer.User!;
-            return await _profileService.GetProfile(idPer);
-        }
+            Person user;
 
-        [HttpGet("stats/{idPer}")]
-        public async Task<GetStatsResponse> GetStats(int idPer, UserContainer userContainer)
-        {
-            Person user = (idPer != 0)?await _userService.GetById(idPer):userContainer.User!;
-            if (user.Op == 1) throw new StatusException(StatusCodes.Status400BadRequest, "Admin users don't have stats");
+            if (idPer == 0) user = userContainer.User!;
+            else user = await _profileService.GetProfile(idPer);
+
+            int totalPlays = await _profileService.GetTotalPlays(user.IdPer);
 
             var stats = await _profileService.GetStats(user.IdPer);
 
-            return new GetStatsResponse
+            return new GetProfileResponse
+            {
+                User = user,
+                TotalPlays = totalPlays,
+                Wpm = stats[0],
+                Accuracy = stats[1]
+            };
+        }
+
+        [HttpGet("trends/{idPer}")]
+        public async Task<GetTrendsResponse> GetStats(int idPer, UserContainer userContainer)
+        {
+            Person user = (idPer != 0) ? await _userService.GetById(idPer) : userContainer.User!;
+            if (user.Op == 1) throw new StatusException(StatusCodes.Status400BadRequest, "Admin users don't have stats");
+
+            var stats = await _profileService.GetTrends(user.IdPer);
+
+            return new GetTrendsResponse
             {
                 DailyStats = stats[0],
                 MonthlyStats = stats[1]
             };
+        }
+
+        [AllowAnonymous]
+        [HttpGet("leaderboard")]
+        public async Task<ActionResult<Ranking[]>> GetGlobalLeaderbaord()
+        {
+            return await _profileService.GetGlobalLeaderboard();
         }
     }
 }

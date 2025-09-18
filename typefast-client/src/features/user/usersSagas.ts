@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { getUserFailure, getUserSuccess, loginFailure, loginSuccess, logoutFailure, logoutSuccess, registerFailure, registerSuccess, type LoginRequest } from "./usersSlice";
+import { getUserFailure, getUserSuccess, loginFailure, loginSuccess, logoutFailure, logoutSuccess, registerFailure, registerSuccess, setFollowFailure, setFollowSuccess, type FollowRequest, type LoginRequest } from "./usersSlice";
 import { takeEvery, call, put } from "redux-saga/effects";
-import { getUserEndpoint, loginEndpoint, logoutEndpoint, registerEndpoint } from "../../constants/api";
+import { followEndpoint, getUserEndpoint, loginEndpoint, logoutEndpoint, registerEndpoint } from "../../constants/api";
 
 function* login(action: PayloadAction<LoginRequest>): Generator {
     let msg = "";
@@ -102,12 +102,36 @@ function* testAdminOnly(): Generator {
     } catch(e){}
 }
 
+function* setFollow(action: PayloadAction<FollowRequest>): Generator {
+    try {
+        const res = yield call(() => fetch(followEndpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(action.payload)
+        }));
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+
+        yield put(setFollowSuccess({
+            user: json,
+            state: action.payload.state
+        }));
+    } catch(e) {
+        console.error(e);
+        yield put(setFollowFailure());
+    }
+}
+
 
 function* usersSaga() {
     yield takeEvery("users/loginStart", login);
     yield takeEvery("users/registerStart", register);
     yield takeEvery("users/getUserStart", getUser);
     yield takeEvery("users/logoutStart", logout);
+    yield takeEvery("users/setFollowStart", setFollow);
 
     yield takeEvery("users/userOnlyEndpoint", testUserOnly);
     yield takeEvery("users/adminOnlyEndpoint", testAdminOnly);

@@ -17,6 +17,9 @@ export default function Navbar() {
                         <li className="nav-item">
                             <NavLink to="/texts" className="nav-link">Texts</NavLink>
                         </li>
+                        <li className="nav-item">
+                            <NavLink to="/leaderboard" className="nav-link">Users</NavLink>
+                        </li>
                     </ul>
                     <div>
                         {user != null && <>

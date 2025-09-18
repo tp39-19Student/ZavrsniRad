@@ -26,7 +26,29 @@ namespace Typefast.Server.Services
             return p;
         }
 
-        public async Task<List<Stat>[]> GetStats(int idPer)
+        public async Task<int> GetTotalPlays(int idPer)
+        {
+            return await _db.Scores.Where(s => s.IdPer == idPer).CountAsync();
+        }
+
+        public async Task<double[]> GetStats(int idPer)
+        {
+            //double wpm = await _db.Scores.Where(s => s.IdPer == idPer).OrderByDescending(s => s.IdSco).Take(100).AverageAsync(s => s.Wpm);
+            //double accuracy = await _db.Scores.Where(s => s.IdPer == idPer).OrderByDescending(s => s.IdSco).Take(100).AverageAsync(s => s.Accuracy);
+
+            //return [wpm, accuracy];
+
+            var scores = await _db.Scores.Where(s => s.IdPer == idPer).OrderByDescending(s => s.IdSco).Take(101).ToListAsync();
+
+            if (scores.Count == 0) return [0, 0];
+
+            double wpm = scores.Average(s => s.Wpm);
+            double accuracy = scores.Average(s => s.Accuracy);
+
+            return [wpm, accuracy];
+        }
+
+        public async Task<List<Stat>[]> GetTrends(int idPer)
         {
             List<Stat> rawStats = await _db.Database.SqlQuery<Stat>($"""
                 SELECT datePlayed, wpm, accuracy
@@ -63,7 +85,7 @@ namespace Typefast.Server.Services
 
             start = DateOnly.FromDateTime(DateTime.Now.AddDays(-31));
             Stat previous = rawStats[cursor];
-            monthlyList.Add(previous);
+            //monthlyList.Add(previous);
 
             int currentYear = previous.DatePlayed.Year;
             int currentMonth = previous.DatePlayed.Month;
@@ -92,6 +114,24 @@ namespace Typefast.Server.Services
             dailyList.Add(previous);
 
             return [dailyList, monthlyList];
+        }
+
+        public async Task<Ranking[]> GetGlobalLeaderboard()
+        {
+            return await _db.Database.SqlQuery<Ranking>($"""
+                    SELECT P.idPer, username, COALESCE(AVG(wpm), 0) as wpm, COALESCE(AVG(accuracy), 0) as accuracy
+                    FROM
+                    (
+                        SELECT *, ROW_NUMBER() OVER (
+                            PARTITION BY idPer
+                            ORDER BY idSco DESC
+                        ) as n
+                        FROM Score
+                    ) AS S1 RIGHT OUTER JOIN Person P ON S1.idPer = P.idPer
+                    WHERE (n <= 101 OR n IS NULL) AND P.op = 0
+                    GROUP BY P.idPer
+                    ORDER BY wpm DESC, accuracy ASC
+            """).ToArrayAsync();
         }
     }
 }

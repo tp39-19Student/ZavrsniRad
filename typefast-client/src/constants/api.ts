@@ -2,6 +2,7 @@ export const loginEndpoint = "/api/user/login/";
 export const registerEndpoint = "/api/user/register/"
 export const getUserEndpoint = "/api/user/get/";
 export const logoutEndpoint = "/api/user/logout/"
+export const followEndpoint = "/api/user/follow/"
 
 
 
@@ -22,4 +23,5 @@ export const leaderboardEndpoint = "/api/game/leaderboard/"
 
 
 export const getProfileEndpoint = "/api/profile/"
-export const getProfileStatsEndpoint = "/api/profile/stats/"
+export const getProfileTrendsEndpoint = "/api/profile/trends/"
+export const getGlobalLeaderboardEndpoint = "/api/profile/leaderboard/"

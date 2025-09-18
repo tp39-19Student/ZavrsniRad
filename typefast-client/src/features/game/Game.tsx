@@ -154,8 +154,8 @@ export default function Game() {
 
         const key = e.key;
         if (key == "Shift") return;
-        console.log("Key: " + key);
-        console.log("Keycode: " + e.keyCode);
+        //console.log("Key: " + key);
+        //console.log("Keycode: " + e.keyCode);
 
 
         if (key == "Delete" || key == "Backspace") {
@@ -178,7 +178,7 @@ export default function Game() {
             setCursor(cursor + 1);
         }
 
-        console.log(mistakeFlags.current.length);
+        //console.log(mistakeFlags.current.length);
     }
 
     function calcWpm() {

@@ -31,6 +31,17 @@ export interface LoginRequest {
     password: string;
 }
 
+export interface FollowRequest {
+    idFer: number;
+    idFed: number;
+    state: boolean;
+}
+
+export interface FollowResponse {
+    user: User;
+    state: boolean;
+}
+
 const usersSlice = createSlice({
     name: "users",
     initialState,
@@ -74,6 +85,19 @@ const usersSlice = createSlice({
         logoutFailure: (_state) => {alert("Logout failed???");},
 
 
+        setFollowStart: (_state, _action: PayloadAction<FollowRequest>) => {},
+        setFollowSuccess: (state, action: PayloadAction<FollowResponse>) => {
+            if (state.user != null) {
+                if (action.payload.state == true) {
+                    state.user.followed.push(action.payload.user);
+                } else {
+                    state.user.followed = state.user.followed.filter(u => u.idPer != action.payload.user.idPer);
+                }
+            }
+        },
+        setFollowFailure: (_state) => {},
+
+
         userOnlyEndpoint: (_state) => {},
         adminOnlyEndpoint: (_state) => {}
     }
@@ -85,6 +109,7 @@ export const {
     registerStart, registerSuccess, registerFailure,
     getUserStart, getUserSuccess, getUserFailure,
     logoutStart, logoutSuccess, logoutFailure,
+    setFollowStart, setFollowSuccess, setFollowFailure,
 
     userOnlyEndpoint, adminOnlyEndpoint
 } = usersSlice.actions;

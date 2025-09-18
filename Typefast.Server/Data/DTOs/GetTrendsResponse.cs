@@ -9,7 +9,7 @@ namespace Typefast.Server.Data.DTOs
         public double Accuracy { get; set; }
     }
 
-    public class GetStatsResponse
+    public class GetTrendsResponse
     {
         public List<Stat> DailyStats { get; set; } // Past 30 days
         public List<Stat> MonthlyStats { get; set; } // Past 12 months

@@ -9,6 +9,7 @@ import Texts from './features/text/Texts'
 import Game from './features/game/Game'
 import Profile from './features/profile/Profile'
 import Block from './features/user/Block'
+import GlobalLeaderboard from './features/profile/GlobalLeaderboard'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ function App() {
       <Route path='/block/:id' element={
         <AuthRoute role={1}><Block /></AuthRoute>
       }></Route>
+      <Route path='/leaderboard' element={<GlobalLeaderboard />}></Route>
     </Routes>
   </React.Fragment>
     

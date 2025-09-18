@@ -25,6 +25,7 @@ export default function TextScores({idTex}: {idTex: number}) {
                 current={page}
                 total={totalPages}
                 onPageChange={showPage}
+                maxWidth={3}
             />
             <table className="table">
                 <thead>

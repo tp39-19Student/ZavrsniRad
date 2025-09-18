@@ -103,5 +103,11 @@ namespace Typefast.Server.Controllers
         {
             return Ok();
         }
+
+        [HttpPost("follow")]
+        public async Task<ActionResult<Person>> SetFollow(FollowRequest req)
+        {
+            return await _userService.SetFollow(req.IdFer, req.IdFed, req.State);
+        }
     }
 }

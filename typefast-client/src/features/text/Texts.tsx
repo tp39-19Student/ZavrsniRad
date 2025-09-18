@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
 import { Modal } from "react-bootstrap";
+import MultiButton from "../../components/Multibutton";
 
 
 export default function Texts() {
@@ -27,7 +28,7 @@ export default function Texts() {
             dispatch(getCategoriesStart());
     }, [dispatch])
 
-    const [showPending, setShowPending] = useState(false);
+    const [showPending, setShowPending] = useState(0);
 
     const [filterText, setFilterText] = useState("");
     const [filterCategory, setFilterCategory] = useState(0);
@@ -38,7 +39,7 @@ export default function Texts() {
 
     const TEXTS_PER_PAGE = 5;
 
-    let displayedTexts = (showPending)?pendingTexts:texts;
+    let displayedTexts = (showPending == 1)?pendingTexts:texts;
 
     if (filterCategory != 0) displayedTexts = displayedTexts.filter(t => t.category.idCat == filterCategory);
     if (filterText.length > 0) displayedTexts = displayedTexts.filter(t => t.content.toLowerCase().includes(filterText.toLowerCase()));
@@ -104,10 +105,11 @@ export default function Texts() {
 
             <h1>Texts</h1>
             {user.op == 1 &&
-                <div>
-                    <button className="btn btn-primary" onClick={() => {setShowPending(false); setPage(0);}}>Approved Texts</button>
-                    <button className="btn btn-secondary" onClick={() => {setShowPending(true); setPage(0);}}>Pending Texts</button>
-                </div>
+                <MultiButton
+                    vals={["Approved", "Pending"]}
+                    selected={showPending}
+                    onSelect={setShowPending}
+                />
             }
             <div>
                 <input
@@ -220,6 +222,7 @@ export default function Texts() {
                 current={page}
                 total={totalPages}
                 onPageChange={showPage}
+                maxWidth={20}
             />
         </div>
     );
