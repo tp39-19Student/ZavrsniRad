@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getLeaderboardStart, getTextStart, submitScoreStart, type Score } from "./gameSlice";
+import { clearText, getTextStart, submitScoreStart } from "./gameSlice";
 import { type Text } from "../text/textsSlice";
 
-import "./Game.css"
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import Scores from "./Scores";
 
 
 export default function Game() {
@@ -13,11 +13,13 @@ export default function Game() {
     const {id} = useParams();
 
     const text = useAppSelector(state => state.game.text) as Text;
-    const leaderboard = useAppSelector(state => state.game.leaderboard);
     const user = useAppSelector(state => state.users.user);
 
     useEffect(() => {
         dispatch(getTextStart(id?parseInt(id):0));
+        return () => {
+            dispatch(clearText());
+        }
     }, [dispatch])
 
     const [time, setTime] = useState(0.0);
@@ -84,10 +86,9 @@ export default function Game() {
     useEffect(() => {
         if (text == null) return;
         mistakeFlags.current = Array(text.content.length).fill(false);
-        dispatch(getLeaderboardStart(text.idTex));
     }, [text])
 
-    const sortedLeaderboard = [...leaderboard].sort((a,b) => a.time - b.time);
+    
 
     return (
         <>
@@ -106,27 +107,7 @@ export default function Game() {
                 </div>
             }
 
-            <h1>Scores</h1>
-            <table id="leaderboard" className="table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Time</th>
-                        <th>Accuracy</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedLeaderboard.map(s =>
-                        <tr key={s.idSco} className={scoreClass(s)}>
-                            <td>{s.user.username}</td>
-                            <td>{s.time.toFixed(2)}</td>
-                            <td>{(s.accuracy * 100).toFixed(2)}%</td>
-                            <td>{new Date(s.datePlayed).toLocaleDateString()}</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+            
             {finished &&
                 <>
                     <LineChart data={graph.current} width={800} height={300} margin={{ top: 25, right: 25, bottom: 25, left: 25 }}>
@@ -139,6 +120,9 @@ export default function Game() {
                         <Tooltip />
                     </LineChart>
                 </>
+            }
+            {text != null &&
+                <Scores idTex={text.idTex} />
             }
         </>
     );
@@ -190,12 +174,6 @@ export default function Game() {
 
         if (mistakes >= total) return 0;
         return ((total - mistakes) / total);
-    }
-
-    function scoreClass(score: Score) {
-        if (score.current) return "table-success";
-        if (score.user.idPer == user?.idPer) return "table-warning";
-        return ""
     }
 
     function graphCapture() {

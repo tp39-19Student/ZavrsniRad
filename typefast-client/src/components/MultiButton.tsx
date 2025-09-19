@@ -3,7 +3,7 @@
 export default function MultiButton({vals, selected, onSelect}: {vals: string[], selected: number, onSelect: (n: number) => any}) {
 
     return (
-        <div>
+        <div className="multibutton">
             {vals.map((el, i) =>
                 <button
                     key={i}

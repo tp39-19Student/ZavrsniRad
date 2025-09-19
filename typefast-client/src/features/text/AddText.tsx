@@ -18,6 +18,7 @@ export default function AddText() {
     const [text, setText] = useState("");
 
     const submitState = useAppSelector(state => state.texts.submitState);
+    const [submitError, setSubmitError] = useState("");
 
     useEffect(() => {
         if (submitState == 2) {
@@ -45,30 +46,55 @@ export default function AddText() {
                 <textarea
                     className="form-control"
                     id="text"
-                    rows={3}
+                    rows={6}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                 ></textarea>
             </div>
-            <button
-                className="btn btn-primary"
-                onClick={submitText}
-            >
-                {submitState == 1?"Please wait...":"Submit Text"}
-            </button>
-            <div className={submitState == -1?"error":"success"}>
-                {submitState == -1 && "Text submission failed"}
-                {submitState == 2 && "Text submitted successfully"}
+            <div style={{display: "flex"}}>
+                <button
+                    className="btn btn-primary"
+                    onClick={submitText}
+                >
+                    {submitState == 1?"Please wait...":"Submit Text"}
+                </button>
+                {(submitState != 0 || submitError.length > 0) &&
+                    <span id="addTextFeedback" className={submitState == -1 || submitError.length > 0?"error":"success"}>
+                        {
+                            submitError.length > 0?
+                            <>{submitError}</>
+                            :
+                            <>
+                                {submitState == -1 && "Text submission failed"}
+                                {submitState == 2 && "Text submitted successfully"} 
+                            </>
+                        }
+                    </span>
+                }
             </div>
         </div>
     );
 
     function submitText() {
-        if (text.length <= 1) return;
+        setSubmitError("");
+
+        const strippedText = text.replaceAll(/w+/g, " ").trim();
+
+        if (strippedText.length < 2) {
+            setSubmitError("Text must be at least 2 characters long");
+            return;
+        }
+
+        if (strippedText.length > 5000) {
+            setSubmitError("Max text length is 5000");
+            return;
+        }
+
+        //alert(strippedText.length);
 
         dispatch(submitTextStart({
             idCat: selectedCategory,
-            text: text
+            text: strippedText
         }));
     }
 }

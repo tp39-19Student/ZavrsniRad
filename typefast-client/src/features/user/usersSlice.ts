@@ -72,7 +72,7 @@ const usersSlice = createSlice({
         getUserStart: (_state) => {},
         getUserSuccess: (state, action: PayloadAction<User>) => {
             state.user = action.payload;
-            console.log(state.user);
+            //console.log(state.user);
         },
         getUserFailure: (_state) => {},
 

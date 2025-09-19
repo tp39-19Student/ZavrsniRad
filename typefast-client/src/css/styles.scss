@@ -1,0 +1,150 @@
+$color-primary-light: #cccada;
+$color-primary: #a5a1c1;
+$color-primary-dark: #595189;
+
+$color-secondary: #cebf8b;
+$color-secondary-dark: #9f8e4b;
+
+$color-bg: #332d51;
+
+$primary: $color-primary;
+$input-bg: $color-primary-dark;
+$input-border-color: $color-primary;
+$input-color: white;
+$input-placeholder-color: rgb(215, 215, 215);
+$modal-content-bg: $color-bg;
+$modal-content-color: white;
+$modal-content-border-color: $color-primary;
+$pagination-bg: $color-primary-dark;
+$pagination-disabled-bg: #656565;
+$dropdown-bg: $color-primary;
+
+#gameInput .correct {
+    background-color: green;
+}
+
+#gameInput .incorrect {
+    background-color: red;
+}
+
+body {
+    background-color: black !important;
+}
+
+.container {
+    background-color: $color-bg;
+}
+
+
+table {
+    border-collapse: separate;
+    border-radius: 15px;
+
+    border: 7px solid $color-primary !important;
+}
+
+table td {
+    background-color: $color-primary-dark !important;
+    border: 1px solid $color-primary !important;
+    color: white !important;
+
+    vertical-align: middle;
+    text-align: center;
+}
+
+table th {
+    text-align: center;
+    vertical-align: bottom;
+}
+
+table th {
+    background-color: $color-primary !important;
+}
+
+#texts-input {
+    display: flex;
+
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+#texts-input>select {
+    width: 40%;
+    margin-left: 20px;
+}
+
+#texts-input>button {
+    width: 20%;
+    margin-right: 20px;
+}
+
+#addTextFeedback {
+    background-color: $color-primary-dark;
+
+    display: flex;
+    align-items: center;
+
+    border: 3px solid $color-primary;
+
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    margin-left: 20px;
+}
+
+#addTextFeedback.error {
+    border-color: red;
+}
+
+#addTextFeedback.success {
+    border-color: greenyellow;
+}
+
+.textActions {
+    display: flex;
+    justify-content: space-around;
+}
+
+.multibutton {
+    width: 100%;
+}
+
+.multibutton>button {
+    width: 50%;
+
+    border-radius: 0px;
+}
+
+.multibutton>button:nth-child(1) {
+    border-top-left-radius: 50px;
+}
+
+.multibutton>button:nth-child(2) {
+    border-top-right-radius: 50px;
+}
+
+#navbarInfo {
+    color: white;
+    
+    display: flex;
+    align-items: center;
+
+    margin-right: 30px;
+}
+
+.navbar {
+    margin-bottom: 30px;
+}
+
+.currentScore>td {
+    background-color: lightgreen !important;
+    color: black !important;
+}
+
+.myScore>td {
+    background-color: $color-primary-light !important;
+    color: black !important;
+}
+
+@import "bootstrap/scss/bootstrap";

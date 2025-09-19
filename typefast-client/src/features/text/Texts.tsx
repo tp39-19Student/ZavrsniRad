@@ -6,7 +6,7 @@ import AddText from "./AddText";
 import { Link } from "react-router";
 import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
-import { Modal } from "react-bootstrap";
+import { DropdownButton, DropdownItem, Modal } from "react-bootstrap";
 import MultiButton from "../../components/Multibutton";
 
 
@@ -71,10 +71,12 @@ export default function Texts() {
     const [modalScores, setModalScores] = useState<Text | null>(null)
     const [showModalScores, setShowModalScores] = useState(false);
 
+    const [showModalAdd , setShowModalAdd] = useState(false);
+
     return (
         <div>
             <Modal show={showModalText} onHide={() => setshowModalText(false)} scrollable>
-                <Modal.Header closeButton>
+                <Modal.Header closeButton closeVariant="white">
                     <Modal.Title>
                         {modalText != null && ("Category: " + modalText.category.name + ", Length: " + modalText.content.length)}
                     </Modal.Title>
@@ -86,7 +88,7 @@ export default function Texts() {
 
 
             <Modal show={showModalScores} onHide={() => setShowModalScores(false)}>
-                <Modal.Header closeButton>
+                <Modal.Header closeButton closeVariant="white">
                     <Modal.Title>
                         {modalScores != null && ("Category: " + modalScores.category.name + ", Length: " + modalScores.content.length)}
                     </Modal.Title>
@@ -96,30 +98,42 @@ export default function Texts() {
                 </Modal.Body>
             </Modal>
 
+            <Modal show={showModalAdd} onHide={() => setShowModalAdd(false)} size="lg">
+                <Modal.Header closeButton closeVariant="white">
+                    <Modal.Title>
+                        New text
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <AddText />
+                </Modal.Body>
+            </Modal>
 
 
+            {/*
             <button onClick={() => dispatch(userOnlyEndpoint())}>User only</button>
             <button onClick={() => dispatch(adminOnlyEndpoint())}>Admin only</button>
+            */}
 
-            <AddText />
+            
+            <div id="texts-input">
+                <button
+                    className="btn btn-success"
+                    onClick={() => setShowModalAdd(true)}
+                >
+                    Add Text
+                </button>
 
-            <h1>Texts</h1>
-            {user.op == 1 &&
-                <MultiButton
-                    vals={["Approved", "Pending"]}
-                    selected={showPending}
-                    onSelect={setShowPending}
-                />
-            }
-            <div>
                 <input
                     type="text"
                     className="form-control"
+                    placeholder="Search texts..."
                     value={filterText}
                     onChange={(e) => {setFilterText(e.target.value); setPage(0);}}
                 />
 
                 <select
+                    className="form-select"
                     value={filterCategory}
                     onChange={(e) => {setFilterCategory(parseInt(e.target.value)); setPage(0);}}
                 >
@@ -129,6 +143,13 @@ export default function Texts() {
                     )}
                 </select>
             </div>
+            {user.op == 1 &&
+                <MultiButton
+                    vals={["Approved", "Pending"]}
+                    selected={showPending}
+                    onSelect={(n) => {setPage(0); setShowPending(n);}}
+                />
+            }
             <table className="table">
                 <thead>
                     <tr>
@@ -150,69 +171,65 @@ export default function Texts() {
                     {(displayedTexts).map(t =>
                         <tr key={t.idTex}>
                             <td
+                                className="col"
                                 onClick={() => {
                                     setModalText(t);
                                     setshowModalText(true);
                                 }}
                             >
-                                {t.content.substring(0, 50) + (t.content.length > 50?"...":"")}
+                                {t.content.substring(0, 200) + (t.content.length > 200?"...":"")}
                             </td>
-                            <td>{t.category.name}</td>
-                            <td>{t.content.length}</td>
-                            <td>
-                                {user.op == 0 &&
-                                    <div>
-                                        <Link to={"/play/" + t.idTex} className="btn btn-primary">Play</Link>
-                                    </div>
-                                }
-                                {user.op == 1 &&
-                                    <div style={{display: "flex"}}>
-                                        
-                                        <div className="dropdown">
-                                            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Change Category
-                                            </button>
-                                            <ul className="dropdown-menu">
+                            <td className="col-2">{t.category.name}</td>
+                            <td className="col-1">{t.content.length}</td>
+                            <td className={user.op == 1?"col-4":"col-1"}>
+                                <div className="textActions">
+                                    {user.op == 0 &&
+                                        <>
+                                            <Link to={"/play/" + t.idTex} className="btn btn-primary">Play</Link>
+                                        </>
+                                    }
+                                    {user.op == 1 &&
+                                        <>
+                                            {t.approved == false?
+                                                <button
+                                                    className="btn btn-success"
+                                                    onClick={() => dispatch(approveTextStart(t.idTex))}
+                                                >
+                                                    Approve
+                                                </button>
+                                                :
+                                                <button
+                                                    className="btn btn-primary"
+                                                    onClick={() => {
+                                                        setModalScores(t);
+                                                        setShowModalScores(true);
+                                                    }}
+                                                >
+                                                    Scores
+                                                </button>
+                                            }
+                                            <DropdownButton title="Change Category" variant="warning">
                                                 {categories.map(c =>
-                                                    <li
-                                                        className="dropdown-item"
+                                                    <DropdownItem
                                                         key={t.idTex + "/" + c.idCat}
                                                         onClick={() => dispatch(changeTextCategoryStart({
                                                             idTex: t.idTex,
                                                             idCat: c.idCat
                                                         }))}
-                                                        >
-                                                            {c.name}
-                                                    </li>
+                                                    >
+                                                        {c.name}
+                                                    </DropdownItem>
                                                 )}
-                                            </ul>
-                                        </div>
-                                        {t.approved == false?
+                                            </DropdownButton>
                                             <button
-                                                className="btn btn-success"
-                                                onClick={() => dispatch(approveTextStart(t.idTex))}
+                                                className="btn btn-danger"
+                                                onClick={() => dispatch(deleteTextStart(t))}
                                             >
-                                                Approve
+                                                    Delete
                                             </button>
-                                            :
-                                            <button
-                                                className="btn btn-warning"
-                                                onClick={() => {
-                                                    setModalScores(t);
-                                                    setShowModalScores(true);
-                                                }}
-                                            >
-                                                Scores
-                                            </button>
-                                        }
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={() => dispatch(deleteTextStart(t))}
-                                        >
-                                                Delete
-                                        </button>
-                                    </div>
-                                }
+                                        </>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     )}

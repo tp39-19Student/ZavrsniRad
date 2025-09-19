@@ -12,5 +12,16 @@ export default defineConfig({
         secure: false
       }
     }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: [
+            'import',
+            'color-functions',
+            'global-builtin',
+        ]
+      }
+    }
   }
 })

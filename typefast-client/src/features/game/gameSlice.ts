@@ -55,6 +55,8 @@ const gameSlice = createSlice({
             state.leaderboard = action.payload;
         },
         getLeaderboardFailure: (_state) => {},
+
+        clearText: (state) => {state.text = null;},
     }
 })
 
@@ -62,7 +64,8 @@ const gameSlice = createSlice({
 export const {
     getTextStart, getTextSuccess, getTextFailure,
     submitScoreStart, submitScoreSuccess, submitScoreFailure,
-    getLeaderboardStart, getLeaderboardSuccess, getLeaderboardFailure
+    getLeaderboardStart, getLeaderboardSuccess, getLeaderboardFailure,
+    clearText
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

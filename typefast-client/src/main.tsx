@@ -4,8 +4,8 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import './css/styles.scss'
+//import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { Provider } from 'react-redux'
 import { store } from './store.ts'
 
