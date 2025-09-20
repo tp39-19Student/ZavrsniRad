@@ -7,7 +7,7 @@ import { Link } from "react-router";
 import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
 import { DropdownButton, DropdownItem, Modal } from "react-bootstrap";
-import MultiButton from "../../components/Multibutton";
+import MultiButton from "../../components/MultiButton";
 
 
 export default function Texts() {
@@ -87,7 +87,7 @@ export default function Texts() {
             </Modal>
 
 
-            <Modal show={showModalScores} onHide={() => setShowModalScores(false)}>
+            <Modal size="lg" show={showModalScores} onHide={() => setShowModalScores(false)}>
                 <Modal.Header closeButton closeVariant="white">
                     <Modal.Title>
                         {modalScores != null && ("Category: " + modalScores.category.name + ", Length: " + modalScores.content.length)}

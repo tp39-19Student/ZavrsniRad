@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { getGlobalLeaderboardStart } from "./profileSlice";
 import { Link } from "react-router";
-import MultiButton from "../../components/Multibutton";
+import MultiButton from "../../components/MultiButton";
 
 
 export default function GlobalLeaderboard() {
@@ -39,7 +39,7 @@ export default function GlobalLeaderboard() {
                 onChange={(e) => setFilterText(e.target.value)} 
                 placeholder="Search users..."
             />
-            {user != null && user.op == 0 &&
+            {user != null &&
                 <MultiButton
                     selected={showFollowing}
                     onSelect={setShowFollowing}

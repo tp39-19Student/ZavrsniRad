@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getProfileStart, getProfileStatsStart } from "./profileSlice";
+import { getProfileStart, getProfileStatsStart, unblockStart } from "./profileSlice";
 import { useParams } from "react-router";
 import { setFollowStart, type User } from "../user/usersSlice";
-import StatCharts from "./StatCharts";
+import TrendCharts from "./TrendCharts";
+import { Modal } from "react-bootstrap";
+import Block from "./Block";
 
 
 
@@ -20,6 +22,7 @@ export default function Profile() {
 
     const isFollowed = profile != null && (user.followed.findIndex(f => f.idPer == profile.idPer) != -1);
 
+    const [showModalBlock, setShowModalBlock] = useState(false);
 
     useEffect(() => {
         dispatch(getProfileStart(id?parseInt(id):0));
@@ -27,46 +30,88 @@ export default function Profile() {
 
     return (
         <div>
-            {profile != null?
+            {(profile != null && profile.op != 1)?
             <>
+                {user.op == 1 && 
+                <Modal show={showModalBlock} onHide={() => setShowModalBlock(false)} scrollable>
+                    <Modal.Header closeButton closeVariant="white">
+                        <Modal.Title>
+                            Block user: {profile.username} (id: {profile.idPer})
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Block profile={profile} />
+                    </Modal.Body>
+                </Modal>
+
+                }
                 <div>
-                    <h1>{profile.username}</h1>
-                    {profile.idPer != user.idPer &&
-                        (isFollowed?
-                            <button
-                            className="btn btn-danger"
-                            onClick={() => dispatch(setFollowStart({
-                                idFer: user.idPer,
-                                idFed: profile.idPer,
-                                state: false
-                            }))}
-                            >
-                                Unfollow
-                            </button>
-                            :
-                            <button
-                            className="btn btn-success"
-                            onClick={() => dispatch(setFollowStart({
-                                idFer: user.idPer,
-                                idFed: profile.idPer,
-                                state: true
-                            }))}
-                            >
-                                Follow
-                            </button>
-                        )
-                    }
-                    Wpm: {wpm.toFixed(2)}, Accuracy: {(accuracy * 100).toFixed(2)}%, TotalPlays: {totalPlays}
+                    <div id="userTitle">
+                        <div className="titleBar">
+                            <div className="title">
+                                <span>{profile.username}</span>
+                                
+                                <span id="medals">
+                                    <span className="gold">{profile.gold}</span>
+                                    <span className="silver">{profile.silver}</span>
+                                    <span className="bronze">{profile.bronze}</span>
+                                </span>
+                            </div>
+                            <div className="actions">
+                                {profile.idPer != user.idPer &&
+                                    (isFollowed?
+                                        <button
+                                        className="btn unfollow"
+                                        onClick={() => dispatch(setFollowStart({
+                                            idFer: user.idPer,
+                                            idFed: profile.idPer,
+                                            state: false
+                                        }))}
+                                        >
+                                            Unfollow
+                                        </button>
+                                        :
+                                        <button
+                                        className="btn follow"
+                                        onClick={() => dispatch(setFollowStart({
+                                            idFer: user.idPer,
+                                            idFed: profile.idPer,
+                                            state: true
+                                        }))}
+                                        >
+                                            Follow
+                                        </button>
+                                    )
+                                }
+                                {user.op == 1 && profile.op != 1 && (
+                                    <>
+                                        {(profile.blUntil < Date.now() / 1000)?
+                                        <button className="btn btn-danger" onClick={() => setShowModalBlock(true)}>Block</button>
+                                        :
+                                        <button className="btn btn-warning" onClick={() => dispatch(unblockStart(profile.idPer))}>Unblock</button>
+                                    }
+                                    </>
+                                )
+                                    
+                                }
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="stats">
+                            <span>Wpm: {wpm.toFixed(2)}</span>
+                            <span>Accuracy: {(accuracy * 100).toFixed(2)}%</span>
+                            <span>Total Plays: {totalPlays}</span>
+                        </div>
+                    </div>
+                    
+                    
+                    
                 </div>
-                <div>Gold: {profile.gold}</div>
-                <div>Silver: {profile.silver}</div>
-                <div>Bronze: {profile.bronze}</div>
 
-                {profile.followed.map(f => 
-                    <div>F:{f.username}</div>
-                )}
+                <div id="trends">
+                    <TrendCharts id={profile.idPer} />
+                </div>
 
-                <StatCharts id={profile.idPer} />
             </>
             :
             <h1>No profile loaded</h1>

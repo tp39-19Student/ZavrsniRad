@@ -2,7 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import { useAppSelector } from "../hooks";
 import Login from "../features/user/Login";
 import Register from "../features/user/Register";
-import MultiButton from "./Multibutton";
+import MultiButton from "./MultiButton";
 
 interface AuthRouteProps {
     role: number;
@@ -23,7 +23,8 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
     }, [lrState])
 
     if (user == null) return (
-        <div>
+        <div className="center">
+            <div className="w-50">
             <MultiButton 
                 vals={["Login", "Register"]}
                 onSelect={setSelected}
@@ -39,6 +40,7 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
                 username = {username}
                 onChange = {handleUsernameChange}
             />}
+            </div>
         </div>
     );
 

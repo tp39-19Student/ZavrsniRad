@@ -39,18 +39,17 @@ export default function TextScores({idTex}: {idTex: number}) {
                 <tbody>
                     {displayedScores.map(s =>
                         <tr key={s.idSco}>
-                            <td>{s.user.username}</td>
-                            <td>{s.time.toFixed(2)}s</td>
-                            <td>{(s.accuracy * 100).toFixed(2)}%</td>
-                            <td>
-                                <div>
+                            <td className="col"><Link to={"/profile/" + s.idPer}>{s.user.username}</Link></td>
+                            <td className="col-2">{s.time.toFixed(2)}s</td>
+                            <td className="col-2">{(s.accuracy * 100).toFixed(2)}%</td>
+                            <td className="col-2">
+                                <div className="textActions">
                                     <button
                                         className="btn btn-warning"
                                         onClick={() => dispatch(deleteScoreStart(s.idSco))}
                                     >
                                         Delete
                                     </button>
-                                    <Link className="btn btn-danger" to={"/block/" + s.idPer}>Block</Link>
                                 </div>
                             </td>
                         </tr>

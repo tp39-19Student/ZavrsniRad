@@ -23,6 +23,9 @@ interface ProfileState {
     monthlyStats: Stat[];
 
     leaderboard: Ranking[];
+
+    blockState: number;
+    blockMsg: string;
 }
 
 const initialState: ProfileState = {
@@ -33,7 +36,10 @@ const initialState: ProfileState = {
     dailyStats: [],
     monthlyStats: [],
 
-    leaderboard: []
+    leaderboard: [],
+
+    blockState: 0,
+    blockMsg: ""
 }
 
 interface GetProfileResponse {
@@ -48,6 +54,12 @@ interface GetTrendsResponse {
     monthlyStats: Stat[];
     totalPlays: number;
 };
+
+export interface BlockRequest {
+    idPer: number;
+    blUntil: number;
+    blReason: string;
+}
 
 const profileSlice = createSlice({
     name: "profile",
@@ -74,13 +86,35 @@ const profileSlice = createSlice({
             state.leaderboard = action.payload;
         },
         getGlobalLeaderboardFailure: (_state) => {},
+
+        setBlockMsg: (state, action:PayloadAction<string>) => {state.blockMsg = action.payload; state.blockState = -1;},
+        clearBlockMsg: (state) => {state.blockMsg = ""; state.blockState = 0;},
+
+
+        blockStart: (state, _action:PayloadAction<BlockRequest>) => {state.blockState = 1;},
+        blockSuccess: (state, action: PayloadAction<User>) => {
+            state.profile = action.payload;
+            state.blockState = 2;
+            state.blockMsg = "Successfully blocked";
+        },
+        blockFailure: (state, action: PayloadAction<string>) => {
+            state.blockMsg = action.payload;
+            state.blockState = -1;
+        },
+
+        unblockStart: (_state, _action: PayloadAction<number>) => {},
+        unblockSuccess: (state, action: PayloadAction<User>) => {state.profile = action.payload;},
+        unblockFailure: (_state) => {}
     }
 });
 
 export const {
     getProfileStart, getProfileSuccess, getProfileFailure,
     getProfileStatsStart, getProfileStatsSuccess, getProfileStatsFailure,
-    getGlobalLeaderboardStart, getGlobalLeaderboardSuccess, getGlobalLeaderboardFailure
+    getGlobalLeaderboardStart, getGlobalLeaderboardSuccess, getGlobalLeaderboardFailure,
+    setBlockMsg, clearBlockMsg,
+    blockStart, blockSuccess, blockFailure,
+    unblockStart, unblockSuccess, unblockFailure
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

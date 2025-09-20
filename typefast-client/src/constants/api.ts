@@ -25,3 +25,6 @@ export const leaderboardEndpoint = "/api/game/leaderboard/"
 export const getProfileEndpoint = "/api/profile/"
 export const getProfileTrendsEndpoint = "/api/profile/trends/"
 export const getGlobalLeaderboardEndpoint = "/api/profile/leaderboard/"
+
+export const blockEndpoint = "/api/profile/block/";
+export const unblockEndpoint = "/api/profile/unblock/";

@@ -99,7 +99,7 @@ const textsSlice = createSlice({
         getScoresForTextStart: (_state, action: PayloadAction<number>) => {},
         getScoresForTextSuccess: (state, action: PayloadAction<Score[]>) => {
             state.scores = action.payload
-            alert(JSON.stringify(action.payload))
+            //alert(JSON.stringify(action.payload))
         },
         getScoresForTextFailure: (_state) => {},
 

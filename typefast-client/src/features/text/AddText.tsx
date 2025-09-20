@@ -78,7 +78,10 @@ export default function AddText() {
     function submitText() {
         setSubmitError("");
 
-        const strippedText = text.replaceAll(/w+/g, " ").trim();
+        const strippedText = text.replaceAll(/\s+/g, " ").trim();
+
+        alert(strippedText);
+        return;
 
         if (strippedText.length < 2) {
             setSubmitError("Text must be at least 2 characters long");

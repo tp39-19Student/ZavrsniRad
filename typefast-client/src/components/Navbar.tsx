@@ -53,22 +53,29 @@ export default function Navbar() {
                             <NavLink to="/leaderboard" className="nav-link">Users</NavLink>
                         </li>
                     </ul>
-                    {user != null &&
+                    
                         <ul className="navbar-nav mb-auto mb-2 mb-lg-0">
-                            
-                            <li className="nav-item" id="navbarInfo">
-                                <span>Logged in as {user?.username}</span>
-                            </li>
-                            {user.op == 0 &&
-                                <li className="nav-item">
-                                    <NavLink to={"/profile/" + user.idPer} className="nav-link">Profile</NavLink>
+                            {user != null? <>
+                                <li className="nav-item" id="navbarInfo">
+                                    <span>Logged in as {user?.username}</span>
                                 </li>
-                            }
-                            <li className="nav-item">
-                                <button onClick={() => dispatch(logoutStart())}>Logout</button> 
-                            </li>
+                                {user.op == 0 &&
+                                    <li className="nav-item" id="profileNav">
+                                        <NavLink to={"/profile/" + user.idPer} className="nav-link">Profile</NavLink>
+                                    </li>
+                                }
+                                <li className="nav-item">
+                                    <button id="logout" onClick={() => dispatch(logoutStart())}>Logout</button> 
+                                </li>
+                            </>
+                            :
+                            <>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/auth"}>Login / Register</NavLink>
+                                </li>
+                            </>}
                         </ul>
-                    }
+                    
                     
                     
                 </div>

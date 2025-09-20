@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { getLeaderboardStart, type Score } from "./gameSlice";
-import MultiButton from "../../components/Multibutton";
+import MultiButton from "../../components/MultiButton";
 
 
 

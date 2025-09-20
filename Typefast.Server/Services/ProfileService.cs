@@ -133,5 +133,27 @@ namespace Typefast.Server.Services
                     ORDER BY wpm DESC, accuracy ASC
             """).ToArrayAsync();
         }
+
+        public async Task<Person> Block(int idPer, int blockUntil, string blockReason)
+        {
+            Person user = await GetProfile(idPer);
+            if (user.Op == 1) throw new StatusException(StatusCodes.Status401Unauthorized, "Admins cannot be blocked");
+
+            if (blockUntil < DateTimeOffset.UtcNow.ToUnixTimeSeconds()) throw new StatusException(StatusCodes.Status400BadRequest, "Block date is in the past");
+
+            user.BlUntil = blockUntil;
+            user.BlReason = blockReason;
+
+            await _db.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<Person> Unblock(int idPer)
+        {
+            Person user = await GetProfile(idPer);
+            user.BlUntil = 0;
+            await _db.SaveChangesAsync();
+            return user;
+        }
     }
 }

@@ -14,52 +14,80 @@ export default function Register({username, onChange}: {username: string, onChan
     const lrMessage = useAppSelector(state => state.users.lrMessage);
 
     return (
-        <div>
-            <div className="error">{error}</div>
-            <div className="mb-3">
-                <label htmlFor="username" className="form-label">Username</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    id="username"
-                    placeholder="Username..."
-                    value={username}
-                    onChange={(e) => onChange(e.target.value)}
-                />
-            </div>
-            <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    placeholder="Password..."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
-            <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">Password</label>
-                <input
-                    type="password"
-                    className="form-control"
-                    id="confirmPassword"
-                    placeholder="Confirm Password..."
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-            </div>
-            <button
-                className="btn btn-primary"
-                onClick={register}
-                disabled={lrState == 1}
-                >
-                    {lrState == 1?"Please wait...":"Register"}
-            </button>{
-                lrState != 1 &&
-                <div className={lrState == 2?"success":"error"}>{lrMessage}</div>
-            }
-        </div>
+        <table className="table table-borderless">
+            <tbody>
+
+                <tr>
+                    <td colSpan={2} className="error">
+                        {error}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="username" className="form-label">Username:</label>
+                    </td>
+                    <td>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="username"
+                            placeholder="Username..."
+                            value={username}
+                            onChange={(e) => onChange(e.target.value)}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="password" className="form-label">Password:</label>
+                    </td>
+                    <td>
+                        <input
+                            type="password"
+                            className="form-control"
+                            id="password"
+                            placeholder="Password..."
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="confirmPassword" className="form-label">Confirm Password:</label>
+                    </td>
+                    <td>
+                        <input
+                            type="password"
+                            className="form-control"
+                            id="confirmPassword"
+                            placeholder="Confirm Password..."
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>
+                        <button
+                            className="btn btn-primary"
+                            onClick={register}
+                            disabled={lrState == 1}
+                            >
+                                {lrState == 1?"Please wait...":"Register"}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>
+                    {
+                        lrState != 1 &&
+                        <div className={lrState == 2?"success":"error"}>{lrMessage}</div>
+                    }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     );
 
     function register() {

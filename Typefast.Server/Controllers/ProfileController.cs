@@ -65,5 +65,19 @@ namespace Typefast.Server.Controllers
         {
             return await _profileService.GetGlobalLeaderboard();
         }
+
+        [AdminOnly]
+        [HttpPost("block")]
+        public async Task<ActionResult<Person>> Block(BlockRequest req)
+        {
+            return await _profileService.Block(req.IdPer, req.blUntil, req.blReason);
+        }
+
+        [AdminOnly]
+        [HttpPost("unblock/{idPer}")]
+        public async Task<ActionResult<Person>> Unblock(int idPer)
+        {
+            return await _profileService.Unblock(idPer);
+        }
     }
 }
