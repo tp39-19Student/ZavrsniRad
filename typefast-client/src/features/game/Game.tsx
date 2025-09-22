@@ -1,27 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { clearText, getTextStart, submitScoreStart } from "./gameSlice";
+import { clearText, getTextStart, submitScoreStart, type SubmitScoreRequest } from "./gameSlice";
 import { type Text } from "../text/textsSlice";
 
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import Scores from "./Scores";
 
 
-export default function Game() {
-    const dispatch = useAppDispatch();
-    const {id} = useParams();
-
-    const text = useAppSelector(state => state.game.text) as Text;
-    const user = useAppSelector(state => state.users.user);
-
-    useEffect(() => {
-        dispatch(getTextStart(id?parseInt(id):0));
-        return () => {
-            dispatch(clearText());
-        }
-    }, [dispatch])
-
+export default function Game({text, onFinish}: {text: Text, onFinish: (score: SubmitScoreRequest) => any}) {
     const [time, setTime] = useState(0.0);
     const [timerHandle, setTimerHandle] = useState(0);
 
@@ -41,12 +28,13 @@ export default function Game() {
     };
 
     const graph = useRef<GraphNode[]>([{time: 0, wpm: 0, accuracy: 100}]);
+    const graphCaptureRate = text.content.length;
     const n = useRef(0);
 
     useEffect(() => {
         if (time > 0) {
             n.current++;
-            if (n.current == 25) {
+            if (n.current >= graphCaptureRate) {
                 n.current = 0;
                 graphCapture();
             }
@@ -68,11 +56,11 @@ export default function Game() {
 
             graphCapture();
 
-            dispatch(submitScoreStart({
+            onFinish({
                 idTex: text.idTex,
                 time: time,
                 accuracy: calcAccuracy()
-            }))
+            });
         }
     }, [cursor])
 
@@ -94,35 +82,42 @@ export default function Game() {
         <>
             {text &&
                 <div>
-                    <h1>Typing text: {text.idTex}</h1>
-                    <h3>Time: {time.toFixed(2)}</h3>
-                    <h3>Wpm: {calcWpm().toFixed(2)}</h3>
-                    <h3>Mistakes: {mistakes}</h3>
-                    <h3>Accuracy: {(calcAccuracy() * 100).toFixed(2)}%</h3>
-                    <p id="gameInput">
+                    <div id="gameHeader">
+                        <div>
+                            <span>Time: {time.toFixed(2)}</span>
+                            </div>
+                        <div id="gameHeaderMain">
+                            <span id="wpmSpan">Wpm: {calcWpm().toFixed(2)}</span>
+                            <span id="accSpan">Accuracy: {(calcAccuracy() * 100).toFixed(2)}%</span>
+                        </div>
+                        <div>
+                            <span>Mistakes: {mistakes}</span>
+                        </div>
+                    </div>
+
+                    <div id="gameText">
                         <span className="correct">{text.content.substring(0, correctCursor)}</span>
                         <span className="incorrect">{text.content.substring(correctCursor, cursor)}</span>
                         <span>{text.content.substring(cursor)}</span>
-                    </p>
+                    </div>
                 </div>
             }
 
             
             {finished &&
-                <>
+            <div className="center">
+                <div id="gameChart">
                     <LineChart data={graph.current} width={800} height={300} margin={{ top: 25, right: 25, bottom: 25, left: 25 }}>
-                        <Line dataKey="wpm" stroke="blue" />
-                        <Line dataKey="accuracy" stroke="red" />
-                        <YAxis padding={{top: 25}} />
-                        <XAxis dataKey="time" type="number" domain={[0,0]}/>
-                        <Legend />
-                        <CartesianGrid />
+                        <Line dataKey="wpm" strokeWidth={3} stroke="#7ab3d8ff" dot={false} />
+                        <Line dataKey="accuracy" strokeWidth={3} stroke="#ef5e5eff" dot={false} />
+                        <YAxis stroke="white" padding={{top: 25}} />
+                        <XAxis stroke="white" dataKey="time" type="number" domain={[0,0]}/>
+                        <Legend align="right" />
+                        <CartesianGrid strokeWidth={0.5} />
                         <Tooltip />
                     </LineChart>
-                </>
-            }
-            {text != null &&
-                <Scores idTex={text.idTex} />
+                </div>
+            </div>
             }
         </>
     );

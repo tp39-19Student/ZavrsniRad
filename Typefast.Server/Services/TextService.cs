@@ -98,11 +98,11 @@ namespace Typefast.Server.Services
 
         public async Task<Text> GetRandom()
         {
-            int count = await _db.Texts.CountAsync();
-            if (count == 0) throw new StatusException(StatusCodes.Status404NotFound, "There are no texts in the database");
+            int count = await _db.Texts.Where(t => t.Approved == true).CountAsync();
+            if (count == 0) throw new StatusException(StatusCodes.Status404NotFound, "There are no approved texts in the database");
             int index = (int)Math.Floor(rand.NextDouble() * count);
 
-            return (await _db.Texts.Skip(index).FirstOrDefaultAsync())!;
+            return (await _db.Texts.Where(t => t.Approved == true).Skip(index).FirstOrDefaultAsync())!;
         }
 
         public async Task<Score[]> GetScores(int idTex)

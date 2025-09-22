@@ -80,9 +80,6 @@ export default function AddText() {
 
         const strippedText = text.replaceAll(/\s+/g, " ").trim();
 
-        alert(strippedText);
-        return;
-
         if (strippedText.length < 2) {
             setSubmitError("Text must be at least 2 characters long");
             return;

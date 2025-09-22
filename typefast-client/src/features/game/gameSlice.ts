@@ -20,11 +20,18 @@ export type Score = {
 interface GameState {
     text: Text | null;
     leaderboard: Score[];
+    leaderboardIdTex: number;
 }
 
 const initialState: GameState = {
     text: null,
-    leaderboard: []
+    leaderboard: [],
+    leaderboardIdTex: -1
+}
+
+export interface GetLeaderboardResponse {
+    scores: Score[];
+    idTex: number;
 }
 
 export interface SubmitScoreRequest {
@@ -50,13 +57,16 @@ const gameSlice = createSlice({
         },
         submitScoreFailure: (_state) => {},
 
-        getLeaderboardStart: (_state, _action: PayloadAction<number>) => {},
-        getLeaderboardSuccess: (state, action: PayloadAction<Score[]>) => {
-            state.leaderboard = action.payload;
+        getLeaderboardStart: (state, action: PayloadAction<number>) => {state.leaderboardIdTex = action.payload;},
+        getLeaderboardSuccess: (state, action: PayloadAction<GetLeaderboardResponse>) => {
+            if (action.payload.idTex == state.leaderboardIdTex) {
+                state.leaderboard = action.payload.scores;
+            }
         },
         getLeaderboardFailure: (_state) => {},
 
         clearText: (state) => {state.text = null;},
+        clearLeaderboard: (state) => {state.leaderboard = [];}
     }
 })
 
@@ -65,7 +75,7 @@ export const {
     getTextStart, getTextSuccess, getTextFailure,
     submitScoreStart, submitScoreSuccess, submitScoreFailure,
     getLeaderboardStart, getLeaderboardSuccess, getLeaderboardFailure,
-    clearText
+    clearText, clearLeaderboard
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

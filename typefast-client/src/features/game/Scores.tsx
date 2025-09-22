@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getLeaderboardStart, type Score } from "./gameSlice";
+import { clearLeaderboard, getLeaderboardStart, type Score } from "./gameSlice";
 import MultiButton from "../../components/MultiButton";
+import { Link } from "react-router";
 
 
 
@@ -14,7 +15,8 @@ export default function Scores({idTex}: {idTex: number}) {
 
     useEffect(() => {
         dispatch(getLeaderboardStart(idTex));
-    }, [dispatch]);
+        return () => {dispatch(clearLeaderboard())};
+    }, [idTex, dispatch]);
 
     const sortedLeaderboard = [...leaderboard].sort((a,b) => a.time - b.time);
     let rankedLeaderboard = sortedLeaderboard.map((el, i) => {return {...el, rank: i};})
@@ -24,35 +26,38 @@ export default function Scores({idTex}: {idTex: number}) {
     })
 
     return (
-        <div>
-            <h1>Scores {leaderboard.length}</h1>
-            <MultiButton
-                selected={showFollowing}
-                onSelect={setShowFollowing}
-                vals={["All", "Followed"]}
-            />
-            <table id="leaderboard" className="table">
-                <thead>
-                    <tr>
-                        <th>Place</th>
-                        <th>User</th>
-                        <th>Time</th>
-                        <th>Accuracy</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rankedLeaderboard.map(s =>
-                        <tr key={s.idSco} className={scoreClass(s)}>
-                            <td>{s.rank + 1}</td>
-                            <td>{s.user.username}</td>
-                            <td>{s.time.toFixed(2)}</td>
-                            <td>{(s.accuracy * 100).toFixed(2)}%</td>
-                            <td>{new Date(s.datePlayed).toLocaleDateString()}</td>
+        <div className="center mt-5">
+            <div style={{width: "85%"}}>
+                <MultiButton
+                    selected={showFollowing}
+                    onSelect={setShowFollowing}
+                    vals={["All", "Followed"]}
+                />
+                <table id="leaderboard" className="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Time</th>
+                            <th>Wpm</th>
+                            <th>Accuracy</th>
+                            <th>Date</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {rankedLeaderboard.map(s =>
+                            <tr key={s.idSco} className={scoreClass(s)}>
+                                <td className="col-1">{s.rank + 1}</td>
+                                <td className="col"><Link to={"/profile/" + s.user.idPer}>{s.user.username}</Link></td>
+                                <td className="col-1">{s.time.toFixed(2)}</td>
+                                <td className="col-1">{s.wpm.toFixed(2)}</td>
+                                <td className="col-1">{(s.accuracy * 100).toFixed(2)}%</td>
+                                <td className="col-2">{new Date(s.datePlayed).toLocaleDateString()}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 

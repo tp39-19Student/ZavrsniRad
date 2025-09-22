@@ -8,6 +8,12 @@ interface AuthRouteProps {
     role: number;
 }
 
+/* Roles
+    -1: Guests and Users
+    0: Users
+    1: Admins
+    2: Users and Admins
+*/
 export default function AuthRoute({role, children}: React.PropsWithChildren<AuthRouteProps>) {
     const lrState = useAppSelector(state => state.users.lrState);
 
@@ -22,7 +28,8 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
         }
     }, [lrState])
 
-    if (user == null) return (
+    if (user == null) {
+        if (role != -1) return (
         <div className="center">
             <div className="w-50">
             <MultiButton 
@@ -41,14 +48,14 @@ export default function AuthRoute({role, children}: React.PropsWithChildren<Auth
                 onChange = {handleUsernameChange}
             />}
             </div>
-        </div>
-    );
-
-    if (role != 2 && user.op != role) {
-        if (role == 0) return <h1>This page is only available to regular users.</h1>
-        if (role == 1) return <h1>This page is only available to admins.</h1>
-        return <h1>User doesnt have the permission to use this page.</h1>
+        </div>);
+    } else {
+        if (role == -1 && user.op != 0) return <h1>This page is only available to guests and regular users</h1>
+        if (role == 0 && user.op != 0) return <h1>This page is only available to regular users</h1>
+        if (role == 1 && user.op != 1) return <h1>This page is only available to admins</h1>
+        if (role == 2 && (user.op != 0 && user.op != 1)) return <h1>This page is only avaible to admins and regular users</h1>
     }
+
 
     return (
         <>

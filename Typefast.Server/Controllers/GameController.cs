@@ -54,9 +54,14 @@ namespace Typefast.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("leaderboard/{idTex}")]
-        public async Task<List<Score>> GetLeaderboard(int idTex)
+        public async Task<ActionResult<GetLeaderboardResponse>> GetLeaderboard(int idTex)
         {
-            return await _gameService.GetLeaderboard(idTex);
+            var scores = await _gameService.GetLeaderboard(idTex);
+            return new GetLeaderboardResponse
+            {
+                Scores = scores,
+                IdTex = idTex
+            };
         }
     }
 }

@@ -1,7 +1,6 @@
 import { NavLink } from "react-router";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { logoutStart } from "../features/user/usersSlice";
-import { Container, Navbar as NavB, Nav, NavDropdown } from "react-bootstrap";
 
 export default function Navbar() {
     const user = useAppSelector(state => state.users.user);
@@ -39,7 +38,7 @@ export default function Navbar() {
             </Container>
         </NavB> */}
 
-        <nav className="navbar navbar-expand navbar-dark bg-dark">
+        <nav className="navbar navbar-expand" id="navbar">
             <div className="container-fluid">
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -56,7 +55,7 @@ export default function Navbar() {
                     
                         <ul className="navbar-nav mb-auto mb-2 mb-lg-0">
                             {user != null? <>
-                                <li className="nav-item" id="navbarInfo">
+                                <li className="" id="navbarInfo">
                                     <span>Logged in as {user?.username}</span>
                                 </li>
                                 {user.op == 0 &&

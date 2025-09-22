@@ -19,16 +19,13 @@ $pagination-bg: $color-primary-dark;
 $pagination-disabled-bg: #656565;
 $dropdown-bg: $color-primary;
 
-#gameInput .correct {
-    background-color: green;
-}
-
-#gameInput .incorrect {
-    background-color: red;
-}
-
 body {
     background-color: black !important;
+}
+
+a {
+    color: white !important;
+    text-decoration: none !important;
 }
 
 .container {
@@ -153,8 +150,16 @@ table th {
     color: black !important;
 }
 
+.currentScore a {
+    color: black !important;
+}
+
 .myScore>td {
     background-color: $color-primary-light !important;
+    color: black !important;
+}
+
+.myScore a {
     color: black !important;
 }
 
@@ -289,8 +294,31 @@ table th {
     margin-bottom: 25px;
 }
 
+#navbar {
+    background-color: $color-primary-dark;
+    border: 2px solid $color-primary;
+
+    padding-left: 5px;
+    border-radius: 15px;
+}
+
+#navbar li.nav-item {
+    background-color: $color-bg;
+
+    padding: 4px;
+
+    margin-right: 5px;
+
+    border-radius: 15px;
+    border: 2px solid $color-primary;
+}
+
+#navbar li.nav-item:has(>a.active) {
+    background-color: $color-primary;
+}
+
 #logout {
-    background-color: #212529;
+    background-color: $color-bg;
     color: white;
 }
 
@@ -302,6 +330,100 @@ table th {
 
 .blocked {
     color: red !important;
+}
+
+#gameHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: $color-primary-dark;
+    border: 5px solid $color-primary;
+    border-radius: 50px;
+
+    padding-left: 30px;
+    padding-right: 30px;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+
+    color: $color-primary;
+    font-size: large;
+}
+
+#gameHeader span {
+
+    background-color: $color-bg;
+
+    padding: 10px;
+
+    border: 3px solid $color-primary;
+    border-radius: 50px;
+}
+
+#gameHeaderMain {
+    width: 50%;
+    display: flex;
+}
+
+#gameHeaderMain #wpmSpan {
+    display: block;
+    width: 50%;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    border-color: #7ab3d8ff;
+    margin-right: 0;
+}
+
+#gameHeaderMain #accSpan {
+    display: block;
+    width: 50%;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    border-color: #ef5e5eff;
+    margin-left: 0;
+}
+
+#gameText {
+    color: white;
+    font-size: x-large;
+    
+
+    border: 5px solid $color-primary;
+    border-top: 0;
+
+    border-radius: 0px 0px 15px 15px;
+
+    margin-left: 40px;
+    margin-right: 40px;
+
+    padding: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+#gameText .correct {
+    background-color: green;
+}
+
+#gameText .incorrect {
+    background-color: red;
+}
+
+#gameChart {
+    background-color: $color-primary-dark;
+    padding-right: 50px;
+    padding-top: 10px;
+
+    border: 5px solid $color-primary;
+    border-top: 0;
+
+    border-radius: 0px 0px 15px 15px;
 }
 
 @import "bootstrap/scss/bootstrap";

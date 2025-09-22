@@ -11,6 +11,7 @@ import Profile from './features/profile/Profile'
 import Block from './features/user/Block'
 import GlobalLeaderboard from './features/profile/GlobalLeaderboard'
 import BlockedPage from './features/user/BlockedPage'
+import SoloGame from './features/game/SoloGame'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ function App() {
           <AuthRoute role={2}><Texts /></AuthRoute>
         }></Route>
         <Route path='/play/:id?' element={
-          <AuthRoute role={0}><Game /></AuthRoute>
+          <AuthRoute role={-1}><SoloGame /></AuthRoute>
         }></Route>
         <Route path='profile/:id?' element={
           <AuthRoute role={2}><Profile /></AuthRoute>

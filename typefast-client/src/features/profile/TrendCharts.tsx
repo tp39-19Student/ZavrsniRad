@@ -58,7 +58,7 @@ export default function TrendCharts({id} : {id: number}) {
                             data={dailyMapped}
                             margin={{right: 20}}
                             >
-                            <Line dataKey={"wpm"} stroke="#7ab3d8ff" />
+                            <Line dataKey={"wpm"} strokeWidth={3} stroke="#7ab3d8ff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
                             <YAxis stroke="white" />
                             <CartesianGrid strokeWidth={0.5} />
@@ -73,7 +73,7 @@ export default function TrendCharts({id} : {id: number}) {
                             data={dailyMapped}
                             margin={{right: 20}}
                             >
-                            <Line dataKey={"accuracy"} stroke="#ef5e5eff" />
+                            <Line dataKey={"accuracy"} strokeWidth={3} stroke="#ef5e5eff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
                             <YAxis stroke="white" />
                             <CartesianGrid strokeWidth={0.5} />
@@ -94,7 +94,7 @@ export default function TrendCharts({id} : {id: number}) {
                             data={monthlyMapped}
                             margin={{right: 20}}
                             >
-                            <Line dataKey={"wpm"} stroke="#7ab3d8ff" />
+                            <Line dataKey={"wpm"} strokeWidth={3} stroke="#7ab3d8ff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
                             <YAxis stroke="white" />
                             <CartesianGrid strokeWidth={0.5} />
@@ -109,7 +109,7 @@ export default function TrendCharts({id} : {id: number}) {
                             data={monthlyMapped}
                             margin={{right: 20}}
                             >
-                            <Line dataKey={"accuracy"} stroke="#ef5e5eff" />
+                            <Line dataKey={"accuracy"} strokeWidth={3} stroke="#ef5e5eff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
                             <YAxis stroke="white" />
                             <CartesianGrid strokeWidth={0.5} />

@@ -22,6 +22,7 @@ namespace Typefast.Server.Controllers
             _textService = textService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [HttpGet("{idTex}")]
         public async Task<ActionResult<Text>> Get(int idTex)
