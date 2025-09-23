@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { clearLeaderboard, getLeaderboardStart, type Score } from "./gameSlice";
+import { clearLeaderboard, getDailyLeaderboardStart, getLeaderboardStart, type Score } from "./gameSlice";
 import MultiButton from "../../components/MultiButton";
 import { Link } from "react-router";
 
@@ -9,13 +9,15 @@ import { Link } from "react-router";
 export default function Scores({idTex}: {idTex: number}) {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.users.user);
-    const leaderboard = useAppSelector(state => state.game.leaderboard);
+    const leaderboard = idTex != 0?useAppSelector(state => state.game.leaderboard):useAppSelector(state => state.game.dailyLeaderboard);
 
     const [showFollowing, setShowFollowing] = useState(0);
 
     useEffect(() => {
-        dispatch(getLeaderboardStart(idTex));
-        return () => {dispatch(clearLeaderboard())};
+        if (idTex != 0) {
+            dispatch(getLeaderboardStart(idTex));
+            return () => {dispatch(clearLeaderboard())};
+        } else dispatch(getDailyLeaderboardStart());
     }, [idTex, dispatch]);
 
     const sortedLeaderboard = [...leaderboard].sort((a,b) => a.time - b.time);

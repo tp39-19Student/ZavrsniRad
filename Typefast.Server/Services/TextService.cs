@@ -1,7 +1,9 @@
 
 
 
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server.Data;
 using Typefast.Server.Middleware;
@@ -78,6 +80,9 @@ namespace Typefast.Server.Services
         public async Task<bool> Delete(int idTex)
         {
             Text text = await GetById(idTex);
+            Daily? daily = await _db.Dailies.FirstOrDefaultAsync();
+
+            if (daily != null && daily.IdTex == text.IdTex) throw new StatusException(StatusCodes.Status400BadRequest, "Cannot delete daily text");
 
             _db.Scores.RemoveRange(_db.Scores.Where(s => s.IdTex == idTex));
             _db.Texts.Remove(text);
@@ -105,12 +110,26 @@ namespace Typefast.Server.Services
             return (await _db.Texts.Where(t => t.Approved == true).Skip(index).FirstOrDefaultAsync())!;
         }
 
+        public async Task<Text> GetDailyText()
+        {
+            var daily = await _db.Dailies.FirstOrDefaultAsync();
+            if (daily == null) throw new StatusException(StatusCodes.Status500InternalServerError, "Daily challenge is not set");
+
+            return await _db.Texts.Where(t => t.IdTex == daily.IdTex).Include(t => t.Category).FirstAsync();
+        }
+
         public async Task<Score[]> GetScores(int idTex)
         {
             var text = await _db.Texts.Include(t => t.Scores).ThenInclude(s => s.User).FirstOrDefaultAsync(t => t.IdTex == idTex);
             if (text == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no text with id " + idTex);
 
             return text.Scores.ToArray();
+        }
+
+        public async Task<Score[]> GetDailyScores()
+        {
+            Text dailyText = await GetDailyText();
+            return await _db.Scores.FromSql($"SELECT S.* FROM Score S JOIN DailyScore DS ON S.idSco = DS.idSco WHERE S.idTex = {dailyText.IdTex}").Include(s => s.User).ToArrayAsync();
         }
     }
 }

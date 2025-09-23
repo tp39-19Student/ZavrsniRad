@@ -17,8 +17,8 @@ interface TextsState {
     approvedTexts: Text[];
     pendingTexts: Text[];
     allCategories: Category[];
-    text: Text | null;
     scores: Score[];
+    dailyScores: Score[];
     submitState: number;
 }
 
@@ -26,8 +26,8 @@ const initialState: TextsState = {
     approvedTexts: [],
     pendingTexts: [],
     allCategories: [],
-    text: null,
     scores: [],
+    dailyScores: [],
     submitState: 0
 }
 
@@ -96,15 +96,23 @@ const textsSlice = createSlice({
         },
         changeTextCategoryFailure: (_state) => {},
 
-        getScoresForTextStart: (_state, action: PayloadAction<number>) => {},
+        getScoresForTextStart: (_state, _action: PayloadAction<number>) => {},
         getScoresForTextSuccess: (state, action: PayloadAction<Score[]>) => {
             state.scores = action.payload
             //alert(JSON.stringify(action.payload))
         },
         getScoresForTextFailure: (_state) => {},
 
+        getDailyScoresStart: (_state) => {},
+        getDailyScoresSuccess: (state, action: PayloadAction<Score[]>) => {
+            state.dailyScores = action.payload
+            //alert("Success: " + JSON.stringify(action.payload));
+        },
+        getDailyScoresFailure: (_state) => {},
+
         deleteScoreStart: (_state, _action: PayloadAction<number>) => {},
         deleteScoreSuccess: (state, action: PayloadAction<number>) => {
+            state.dailyScores = state.dailyScores.filter(s => s.idSco != action.payload);
             state.scores = state.scores.filter(s => s.idSco != action.payload);
         },
         deleteScoreFailure: (_state) => {},
@@ -123,5 +131,6 @@ export const {
     deleteTextStart, deleteTextSuccess, deleteTextFailure,
     changeTextCategoryStart, changeTextCategorySuccess, changeTextCategoryFailure,
     getScoresForTextStart, getScoresForTextSuccess, getScoresForTextFailure,
+    getDailyScoresStart, getDailyScoresSuccess, getDailyScoresFailure,
     deleteScoreStart, deleteScoreSuccess, deleteScoreFailure
 } = textsSlice.actions;

@@ -20,7 +20,7 @@ namespace Typefast.Server.Models
         public int Bronze { get; set; }
 
         public string? BlReason { get; set; }
-        public int BlUntil { get; set; }
+        public long BlUntil { get; set; }
 
         [JsonIgnore]
         public ICollection<Score> Scores { get; set; } = new List<Score>();

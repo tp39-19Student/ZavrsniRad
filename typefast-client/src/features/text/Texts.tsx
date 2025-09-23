@@ -8,6 +8,7 @@ import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
 import { DropdownButton, DropdownItem, Modal } from "react-bootstrap";
 import MultiButton from "../../components/MultiButton";
+import { getDailyTextStart } from "../game/gameSlice";
 
 
 export default function Texts() {
@@ -22,10 +23,13 @@ export default function Texts() {
     const texts = useAppSelector(state => state.texts.approvedTexts);
     const pendingTexts = useAppSelector(state => state.texts.pendingTexts);
 
+    const dailyText = useAppSelector(state => state.game.dailyText);
+
     const categories = useAppSelector(state => state.texts.allCategories);
 
     useEffect(() => {
             dispatch(getCategoriesStart());
+            dispatch(getDailyTextStart());
     }, [dispatch])
 
     const [showPending, setShowPending] = useState(0);
@@ -68,7 +72,7 @@ export default function Texts() {
     const [modalText, setModalText] = useState<Text | null>(null);
     const [showModalText, setshowModalText] = useState(false);
 
-    const [modalScores, setModalScores] = useState<Text | null>(null)
+    const [modalScoresId, setModalScoresId] = useState(-1);
     const [showModalScores, setShowModalScores] = useState(false);
 
     const [showModalAdd , setShowModalAdd] = useState(false);
@@ -90,11 +94,16 @@ export default function Texts() {
             <Modal size="lg" show={showModalScores} onHide={() => setShowModalScores(false)}>
                 <Modal.Header closeButton closeVariant="white">
                     <Modal.Title>
-                        {modalScores != null && ("Category: " + modalScores.category.name + ", Length: " + modalScores.content.length)}
+                        {modalScoresId >= 0 && (
+                            modalScoresId == 0?
+                            "Daily Scores"
+                            :
+                            "Scores for id " + modalScoresId
+                        )}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {modalScores != null && <TextScores idTex={modalScores.idTex} />}
+                    {modalScoresId != null && <TextScores idTex={modalScoresId} />}
                 </Modal.Body>
             </Modal>
 
@@ -181,7 +190,7 @@ export default function Texts() {
                             </td>
                             <td className="col-2">{t.category.name}</td>
                             <td className="col-1">{t.content.length}</td>
-                            <td className={user.op == 1?"col-4":"col-1"}>
+                            <td className={user.op == 1?"col-4":"col-2"}>
                                 <div className="textActions">
                                     {user.op == 0 &&
                                         <>
@@ -201,38 +210,62 @@ export default function Texts() {
                                                 <button
                                                     className="btn btn-primary"
                                                     onClick={() => {
-                                                        setModalScores(t);
+                                                        setModalScoresId(t.idTex);
                                                         setShowModalScores(true);
                                                     }}
                                                 >
                                                     Scores
                                                 </button>
                                             }
-                                            <DropdownButton title="Change Category" variant="warning">
-                                                {categories.map(c =>
-                                                    <DropdownItem
-                                                        key={t.idTex + "/" + c.idCat}
-                                                        onClick={() => dispatch(changeTextCategoryStart({
-                                                            idTex: t.idTex,
-                                                            idCat: c.idCat
-                                                        }))}
-                                                    >
-                                                        {c.name}
-                                                    </DropdownItem>
-                                                )}
-                                            </DropdownButton>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={() => dispatch(deleteTextStart(t))}
-                                            >
-                                                    Delete
-                                            </button>
+                                            {(dailyText == null || t.idTex != dailyText.idTex) && <>
+                                                <DropdownButton title="Change Category" variant="warning">
+                                                    {categories.map(c =>
+                                                        <DropdownItem
+                                                            key={t.idTex + "/" + c.idCat}
+                                                            onClick={() => dispatch(changeTextCategoryStart({
+                                                                idTex: t.idTex,
+                                                                idCat: c.idCat
+                                                            }))}
+                                                        >
+                                                            {c.name}
+                                                        </DropdownItem>
+                                                    )}
+                                                </DropdownButton>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => dispatch(deleteTextStart(t))}
+                                                >
+                                                        Delete
+                                                </button>
+                                            </>}
                                         </>
                                     }
                                 </div>
                             </td>
                         </tr>
                     )}
+                    {dailyText != null && showPending == 0 &&
+                        <tr id="dailyText">
+                            <td>{dailyText.content.substring(0, 200) + (dailyText.content.length > 200?"...":"")}</td>
+                            <td className="col-2">{dailyText.category.name}</td>
+                            <td className="col-1">{dailyText.content.length}</td>
+                            <td className={user.op == 1?"col-4":"col-2"}><div className="textActions">
+                            {user.op == 1?
+                            <button
+                                id="dailyButton"
+                                className="btn"
+                                onClick={() => {
+                                    setModalScoresId(0);
+                                    setShowModalScores(true);
+                                }}
+                            >
+                                Scores (Daily)
+                            </button>
+                            :
+                            <Link to={"/playDaily/"} className="btn" id="dailyButton">Play Daily</Link>
+                            }
+                            </div></td>
+                    </tr>}
                 </tbody>
             </table>
             <Pagination 

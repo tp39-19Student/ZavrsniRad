@@ -6,6 +6,7 @@ import {
     deleteTextEndpoint,
     getApprovedTextsEndpoint,
     getCategoriesEndpoint,
+    getDailyScoresEndpoint,
     getPendingTextsEndpoint,
     getTextEndpoint,
     submitTextEndpoint
@@ -23,7 +24,9 @@ import {
     getScoresForTextSuccess,
     getScoresForTextFailure,
     deleteScoreSuccess,
-    deleteScoreFailure
+    deleteScoreFailure,
+    getDailyScoresFailure,
+    getDailyScoresSuccess
 } from "./textsSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -141,6 +144,19 @@ function* getScoresForText(action: PayloadAction<number>): Generator {
     }
 }
 
+function* getDailyScores(): Generator {
+    try {
+        const res = yield call(() => fetch(getDailyScoresEndpoint));
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+        yield put(getDailyScoresSuccess(json));
+    } catch(e) {
+        console.error(e);
+        yield put(getDailyScoresFailure());
+    }
+}
+
 function* deleteScore(action: PayloadAction<number>): Generator {
     try {
         const res = yield call(() => fetch(deleteScoreEndpoint + action.payload + "/", {method: "DELETE"}));
@@ -162,6 +178,7 @@ function* textsSaga() {
     yield takeEvery("texts/deleteTextStart", deleteText);
     yield takeEvery("texts/changeTextCategoryStart", changeTextCategory);
     yield takeEvery("texts/getScoresForTextStart", getScoresForText);
+    yield takeEvery("texts/getDailyScoresStart", getDailyScores);
     yield takeEvery("texts/deleteScoreStart", deleteScore);
 }
 

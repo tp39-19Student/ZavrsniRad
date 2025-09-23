@@ -23,7 +23,7 @@ CREATE TABLE Daily
 (
 	idDai		INTEGER NOT NULL AUTO_INCREMENT,
 	idTex		INTEGER NOT NULL,
-	startTime	INTEGER NULL,
+	startTime	BIGINT NULL,
 	PRIMARY KEY (idDai)
 ) ENGINE=InnoDB;
 
@@ -37,7 +37,7 @@ CREATE TABLE Person
 	silver		INTEGER NULL,
 	bronze		INTEGER NULL,
 	blReason	VARCHAR(1000) NULL,
-	blUntil		INTEGER NULL,
+	blUntil		BIGINT NULL,
 	
 	PRIMARY KEY (idPer)
 ) ENGINE=InnoDB;

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { deleteScoreStart, getScoresForTextStart } from "./textsSlice";
+import { deleteScoreStart, getDailyScoresStart, getScoresForTextStart } from "./textsSlice";
 import Pagination from "../../components/Pagination";
 import { Link } from "react-router";
 
 export default function TextScores({idTex}: {idTex: number}) {
     const dispatch = useAppDispatch();
-    const scores = useAppSelector(state => state.texts.scores);
+    const scores = idTex != 0?useAppSelector(state => state.texts.scores): useAppSelector(state => state.texts.dailyScores);
     
     const [page, setPage] = useState(0);
 
@@ -14,7 +14,8 @@ export default function TextScores({idTex}: {idTex: number}) {
     const totalPages = Math.ceil(scores.length / SCORES_PER_PAGE);
 
     useEffect(() => {
-        dispatch(getScoresForTextStart(idTex));
+        if (idTex != 0) dispatch(getScoresForTextStart(idTex));
+        else dispatch(getDailyScoresStart());
     }, [dispatch])
 
     const displayedScores = [...scores].sort((a, b) => a.time - b.time).slice(page * SCORES_PER_PAGE, (page + 1) * SCORES_PER_PAGE);

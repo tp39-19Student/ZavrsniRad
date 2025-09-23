@@ -31,6 +31,12 @@ namespace Typefast.Server.Controllers
             return await _textService.GetById(idTex);
         }
 
+        [HttpGet("daily")]
+        public async Task<ActionResult<Text>> GetDailyText()
+        {
+            return await _textService.GetDailyText();
+        }
+
         [HttpGet("getApproved")]
         public async Task<List<Text>> GetApproved()
         {
@@ -89,11 +95,18 @@ namespace Typefast.Server.Controllers
             return await _textService.ChangeCategory(idTex, idCat);
         }
 
-        [AllowAnonymous]
+        [AdminOnly]
         [HttpGet("{idTex}/scores")]
         public async Task<Score[]> GetScores(int idTex)
         {
             return await _textService.GetScores(idTex);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("daily/scores")]
+        public async Task<Score[]> GetDailyScores()
+        {
+            return await _textService.GetDailyScores();
         }
     }
 }

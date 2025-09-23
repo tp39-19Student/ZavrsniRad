@@ -11,7 +11,7 @@ namespace Typefast.Server.Models
         [Key]
         public int IdDai { get; set; }
 
-        public int IdText { get; set; }
-        public int StartTime { get; set; }
+        public int IdTex { get; set; }
+        public long StartTime { get; set; }
     }
 }

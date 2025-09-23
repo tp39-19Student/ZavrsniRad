@@ -21,8 +21,8 @@ export default function Pagination({current, total, onPageChange, maxWidth = 8}:
                 </li>
                 {shownKeys().map(i =>
                     {
-                        if (i == -1) return <li className="page-item disabled"><a className="page-link">...</a></li>
-                        return (<li key={i} className="page-item">
+                        if (i < 0) return <li key={i} className="page-item disabled"><a className="page-link">...</a></li>
+                        return (<li key={i + 1} className="page-item">
                             <a
                                 className={"page-link" + ((current == i)?" active":"")}
                                 onClick={() => onPageChange(i)}
@@ -73,7 +73,7 @@ export default function Pagination({current, total, onPageChange, maxWidth = 8}:
         for (let i = left; i <= right; i++) res.push(i);
 
         if (right < total - 1) {
-            res.push(-1);
+            res.push(-2);
             res.push(total - 1);
         }
 

@@ -16,9 +16,13 @@ export const changeTextCategoryEndpoint = "/api/text/changeCategory/"
 
 
 export const getTextEndpoint = "/api/text/";
+export const getDailyTextEndpoint = "/api/text/daily/"
 export const submitScoreEndpoint = "/api/game/submitScore/"
+export const submitDailyScoreEndpoint = "/api/game/submitDailyScore/";
 export const deleteScoreEndpoint = "/api/game/deleteScore/"
 export const leaderboardEndpoint = "/api/game/leaderboard/"
+export const dailyLeaderboardEndpoint = "/api/game/leaderboard/daily/"
+export const getDailyScoresEndpoint = "/api/text/daily/scores/"
 
 
 

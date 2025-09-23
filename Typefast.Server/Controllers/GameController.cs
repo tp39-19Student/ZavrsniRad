@@ -30,18 +30,14 @@ namespace Typefast.Server.Controllers
         [HttpPost("submitScore")]
         public async Task<ActionResult<Score>> SubmitScore(SubmitScoreRequest req, UserContainer userContainer)
         {
-            Text text = await _textService.GetById(req.IdTex);
-            if (text.Approved == false) throw new StatusException(StatusCodes.Status400BadRequest, "Text is not approved, cannot submit score");
+            return await _gameService.SubmitScore(req, userContainer.User!);
+        }
 
-            Score score = new Score();
-            score.IdPer = userContainer.User!.IdPer;
-            score.IdTex = req.IdTex;
-            score.Time = req.Time;
-            score.Accuracy = req.Accuracy;
-            score.DatePlayed = DateOnly.FromDateTime(DateTime.Now);
-            score.Wpm = (text.Content.Length / 5.0) * (60.0 / req.Time);
-            await _gameService.AddScore(score);
-            return score;
+        [UserOnly]
+        [HttpPost("submitDailyScore")]
+        public async Task<ActionResult<Score>> SubmitDailyScore(SubmitScoreRequest req, UserContainer userContainer)
+        {
+            return await _gameService.SubmitDailyScore(req, userContainer.User!);
         }
 
         [AdminOnly]
@@ -62,6 +58,22 @@ namespace Typefast.Server.Controllers
                 Scores = scores,
                 IdTex = idTex
             };
+        }
+
+        [AllowAnonymous]
+        [HttpGet("leaderboard/daily")]
+        public async Task<ActionResult<List<Score>>> GetDailyLeaderboard()
+        {
+            return await _gameService.GetDailyLeaderboard();
+        }
+
+
+        //For testing
+        [AllowAnonymous]
+        [HttpGet("changeDaily")]
+        public async Task ChangeDaily()
+        {
+            await _gameService.ChangeDaily();
         }
     }
 }

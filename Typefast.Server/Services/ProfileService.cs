@@ -134,7 +134,7 @@ namespace Typefast.Server.Services
             """).ToArrayAsync();
         }
 
-        public async Task<Person> Block(int idPer, int blockUntil, string blockReason)
+        public async Task<Person> Block(int idPer, long blockUntil, string blockReason)
         {
             Person user = await GetProfile(idPer);
             if (user.Op == 1) throw new StatusException(StatusCodes.Status401Unauthorized, "Admins cannot be blocked");

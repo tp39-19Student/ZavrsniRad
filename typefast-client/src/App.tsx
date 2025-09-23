@@ -12,6 +12,7 @@ import Block from './features/user/Block'
 import GlobalLeaderboard from './features/profile/GlobalLeaderboard'
 import BlockedPage from './features/user/BlockedPage'
 import SoloGame from './features/game/SoloGame'
+import DailyGame from './features/game/DailyGame'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -35,6 +36,9 @@ function App() {
         }></Route>
         <Route path='/play/:id?' element={
           <AuthRoute role={-1}><SoloGame /></AuthRoute>
+        }></Route>
+        <Route path='playDaily' element={
+          <AuthRoute role={0}><DailyGame /></AuthRoute>
         }></Route>
         <Route path='profile/:id?' element={
           <AuthRoute role={2}><Profile /></AuthRoute>

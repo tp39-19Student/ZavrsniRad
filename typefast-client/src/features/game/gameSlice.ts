@@ -21,12 +21,18 @@ interface GameState {
     text: Text | null;
     leaderboard: Score[];
     leaderboardIdTex: number;
+
+    dailyText: Text | null;
+    dailyLeaderboard: Score[];
 }
 
 const initialState: GameState = {
     text: null,
     leaderboard: [],
-    leaderboardIdTex: -1
+    leaderboardIdTex: -1,
+
+    dailyText: null,
+    dailyLeaderboard: []
 }
 
 export interface GetLeaderboardResponse {
@@ -57,6 +63,13 @@ const gameSlice = createSlice({
         },
         submitScoreFailure: (_state) => {},
 
+        submitDailyScoreStart: (_state, _action: PayloadAction<SubmitScoreRequest>) => {},
+        submitDailyScoreSuccess: (state, action: PayloadAction<Score>) => {
+            action.payload.current = true;
+            state.dailyLeaderboard.push(action.payload);
+        },
+        submitDailyScoreFailure: (_state) => {},
+
         getLeaderboardStart: (state, action: PayloadAction<number>) => {state.leaderboardIdTex = action.payload;},
         getLeaderboardSuccess: (state, action: PayloadAction<GetLeaderboardResponse>) => {
             if (action.payload.idTex == state.leaderboardIdTex) {
@@ -66,7 +79,15 @@ const gameSlice = createSlice({
         getLeaderboardFailure: (_state) => {},
 
         clearText: (state) => {state.text = null;},
-        clearLeaderboard: (state) => {state.leaderboard = [];}
+        clearLeaderboard: (state) => {state.leaderboard = [];},
+
+        getDailyTextStart: (_state) => {},
+        getDailyTextSuccess: (state, action: PayloadAction<Text>) => {state.dailyText = action.payload},
+        getDailyTextFailure: (_state) => {},
+
+        getDailyLeaderboardStart: (_state) => {},
+        getDailyLeaderboardSuccess: (state, action: PayloadAction<Score[]>) => {state.dailyLeaderboard = action.payload},
+        getDailyLeaderboardFailure: (_state) => {}
     }
 })
 
@@ -74,8 +95,11 @@ const gameSlice = createSlice({
 export const {
     getTextStart, getTextSuccess, getTextFailure,
     submitScoreStart, submitScoreSuccess, submitScoreFailure,
+    submitDailyScoreStart, submitDailyScoreSuccess, submitDailyScoreFailure,
     getLeaderboardStart, getLeaderboardSuccess, getLeaderboardFailure,
-    clearText, clearLeaderboard
+    clearText, clearLeaderboard,
+    getDailyTextStart, getDailyTextSuccess, getDailyTextFailure,
+    getDailyLeaderboardStart, getDailyLeaderboardSuccess, getDailyLeaderboardFailure
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
