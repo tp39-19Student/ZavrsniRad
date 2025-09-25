@@ -27,6 +27,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+builder.Services.AddSingleton<DailyService>();
+builder.Services.AddSingleton<IHostedService, DailyService>(sp => sp.GetService<DailyService>()!);
+
 builder.Services.AddScoped<PasswordHasher<Person>>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

@@ -23,6 +23,7 @@ export const deleteScoreEndpoint = "/api/game/deleteScore/"
 export const leaderboardEndpoint = "/api/game/leaderboard/"
 export const dailyLeaderboardEndpoint = "/api/game/leaderboard/daily/"
 export const getDailyScoresEndpoint = "/api/text/daily/scores/"
+export const getNextDailyTimeEndpoint = "/api/game/nextDailyTime/";
 
 
 

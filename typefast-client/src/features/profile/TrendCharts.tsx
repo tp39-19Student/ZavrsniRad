@@ -75,7 +75,7 @@ export default function TrendCharts({id} : {id: number}) {
                             >
                             <Line dataKey={"accuracy"} strokeWidth={3} stroke="#ef5e5eff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
-                            <YAxis stroke="white" />
+                            <YAxis stroke="white" domain={[0, 1]} />
                             <CartesianGrid strokeWidth={0.5} />
                             <Tooltip content={(t) => CustomTooltip(t, "accuracy")} />
                             <Legend align="right" />
@@ -111,7 +111,7 @@ export default function TrendCharts({id} : {id: number}) {
                             >
                             <Line dataKey={"accuracy"} strokeWidth={3} stroke="#ef5e5eff" dot={false} />
                             <XAxis stroke="white" dataKey={"xLabel"} />
-                            <YAxis stroke="white" />
+                            <YAxis stroke="white" domain={[0, 1]} />
                             <CartesianGrid strokeWidth={0.5} />
                             <Tooltip content={(t) => CustomTooltip(t, "accuracy")} />
                             <Legend align="right" />

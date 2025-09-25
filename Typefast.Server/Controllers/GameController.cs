@@ -67,6 +67,13 @@ namespace Typefast.Server.Controllers
             return await _gameService.GetDailyLeaderboard();
         }
 
+        [AllowAnonymous]
+        [HttpGet("nextDailyTime")]
+        public ActionResult<long> GetNextDailyTime(DailyService dailyService)
+        {
+            return dailyService.NextDailyTimestamp;
+        }
+
 
         //For testing
         [AllowAnonymous]

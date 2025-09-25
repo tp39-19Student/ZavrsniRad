@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { call, put, takeEvery } from "redux-saga/effects";
-import { dailyLeaderboardEndpoint, getDailyTextEndpoint, getTextEndpoint, leaderboardEndpoint, submitDailyScoreEndpoint, submitScoreEndpoint } from "../../constants/api";
-import { getDailyLeaderboardFailure, getDailyLeaderboardSuccess, getDailyTextFailure, getDailyTextSuccess, getLeaderboardFailure, getLeaderboardSuccess, getTextFailure, getTextSuccess, submitDailyScoreFailure, submitDailyScoreSuccess, submitScoreSuccess, type SubmitScoreRequest } from "./gameSlice";
+import { dailyLeaderboardEndpoint, getDailyTextEndpoint, getNextDailyTimeEndpoint, getTextEndpoint, leaderboardEndpoint, submitDailyScoreEndpoint, submitScoreEndpoint } from "../../constants/api";
+import { getDailyLeaderboardFailure, getDailyLeaderboardSuccess, getDailyTextFailure, getDailyTextSuccess, getLeaderboardFailure, getLeaderboardSuccess, getNextDailyTimeFailure, getNextDailyTimeSuccess, getTextFailure, getTextSuccess, submitDailyScoreFailure, submitDailyScoreSuccess, submitScoreSuccess, type SubmitScoreRequest } from "./gameSlice";
 import { submitTextFailure } from "../text/textsSlice";
 
 
@@ -103,6 +103,24 @@ function* getDailyLeaderboard(): Generator {
     }
 }
 
+function* getNextDailyTime(): Generator {
+    try {
+        const res = yield call(() => fetch(getNextDailyTimeEndpoint));
+        if (!res.ok) throw res;
+
+        const json = yield res.json();
+        //const text = yield res.text();
+
+        //alert("Json: " + json);
+        //alert("Text: " + text);
+
+        yield put(getNextDailyTimeSuccess(json));
+    } catch(e) {
+        console.error(e);
+        yield put(getNextDailyTimeFailure());
+    }
+}
+
 function* gameSaga() {
     yield takeEvery("game/getTextStart", getText);
     yield takeEvery("game/submitScoreStart", submitScore);
@@ -111,6 +129,7 @@ function* gameSaga() {
 
     yield takeEvery("game/getDailyTextStart", getDailyText);
     yield takeEvery("game/getDailyLeaderboardStart", getDailyLeaderboard);
+    yield takeEvery("game/getNextDailyTimeStart", getNextDailyTime);
 }
 
 export default gameSaga;

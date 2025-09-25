@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector, useDailyCountdown } from "../../hooks";
 import { adminOnlyEndpoint, userOnlyEndpoint, type User } from "../user/usersSlice";
 import { type Text, approveTextStart, changeTextCategoryStart, deleteTextStart, getApprovedTextsStart, getCategoriesStart, getPendingTextsStart } from "./textsSlice";
 import AddText from "./AddText";
@@ -8,7 +8,7 @@ import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
 import { DropdownButton, DropdownItem, Modal } from "react-bootstrap";
 import MultiButton from "../../components/MultiButton";
-import { getDailyTextStart } from "../game/gameSlice";
+import { getDailyTextStart, getNextDailyTimeStart } from "../game/gameSlice";
 
 
 export default function Texts() {
@@ -27,10 +27,14 @@ export default function Texts() {
 
     const categories = useAppSelector(state => state.texts.allCategories);
 
+    const dailyCountdown = useDailyCountdown();
+
     useEffect(() => {
             dispatch(getCategoriesStart());
             dispatch(getDailyTextStart());
     }, [dispatch])
+
+    
 
     const [showPending, setShowPending] = useState(0);
 
@@ -58,6 +62,7 @@ export default function Texts() {
                 case "length": res = a.content.length - b.content.length; break;
                 case "text": res = a.content.localeCompare(b.content); break;
                 case "category": res = a.category.name.localeCompare(b.category.name); break;
+                default: break;
             }
             return (sortDirection == "desc")?-res:res;
         })
@@ -246,7 +251,13 @@ export default function Texts() {
                     )}
                     {dailyText != null && showPending == 0 &&
                         <tr id="dailyText">
-                            <td>{dailyText.content.substring(0, 200) + (dailyText.content.length > 200?"...":"")}</td>
+                            <td
+                                className="col"
+                                onClick={() => {
+                                    setModalText(dailyText);
+                                    setshowModalText(true);
+                                }}
+                            >{dailyText.content.substring(0, 200) + (dailyText.content.length > 200?"...":"")}</td>
                             <td className="col-2">{dailyText.category.name}</td>
                             <td className="col-1">{dailyText.content.length}</td>
                             <td className={user.op == 1?"col-4":"col-2"}><div className="textActions">
@@ -259,10 +270,10 @@ export default function Texts() {
                                     setShowModalScores(true);
                                 }}
                             >
-                                Scores (Daily)
+                                Daily Scores ({dailyCountdown})
                             </button>
                             :
-                            <Link to={"/playDaily/"} className="btn" id="dailyButton">Play Daily</Link>
+                            <Link to={"/playDaily/"} className="btn" id="dailyButton">Play Daily ({dailyCountdown})</Link>
                             }
                             </div></td>
                     </tr>}

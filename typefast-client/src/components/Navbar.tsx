@@ -42,12 +42,16 @@ export default function Navbar() {
             <div className="container-fluid">
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        {(user == null || user.op != 1) &&
                         <li className="nav-item">
-                            <NavLink to="/" className="nav-link">Home</NavLink>
+                            <NavLink to="/play" className="nav-link">Play</NavLink>
                         </li>
+                        }
+                        {user != null &&
                         <li className="nav-item">
                             <NavLink to="/texts" className="nav-link">Texts</NavLink>
                         </li>
+                        }
                         <li className="nav-item">
                             <NavLink to="/leaderboard" className="nav-link">Users</NavLink>
                         </li>
@@ -70,7 +74,7 @@ export default function Navbar() {
                             :
                             <>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/auth"}>Login / Register</NavLink>
+                                    <NavLink className="nav-link" to={"/auth"}>Sign In</NavLink>
                                 </li>
                             </>}
                         </ul>

@@ -24,6 +24,7 @@ interface GameState {
 
     dailyText: Text | null;
     dailyLeaderboard: Score[];
+    nextDailyTime: number;
 }
 
 const initialState: GameState = {
@@ -32,7 +33,8 @@ const initialState: GameState = {
     leaderboardIdTex: -1,
 
     dailyText: null,
-    dailyLeaderboard: []
+    dailyLeaderboard: [],
+    nextDailyTime: 0
 }
 
 export interface GetLeaderboardResponse {
@@ -87,7 +89,11 @@ const gameSlice = createSlice({
 
         getDailyLeaderboardStart: (_state) => {},
         getDailyLeaderboardSuccess: (state, action: PayloadAction<Score[]>) => {state.dailyLeaderboard = action.payload},
-        getDailyLeaderboardFailure: (_state) => {}
+        getDailyLeaderboardFailure: (_state) => {},
+
+        getNextDailyTimeStart: (_state) => {},
+        getNextDailyTimeSuccess: (state, action: PayloadAction<number>) => {state.nextDailyTime = action.payload},
+        getNextDailyTimeFailure: (_state) => {},
     }
 })
 
@@ -99,7 +105,8 @@ export const {
     getLeaderboardStart, getLeaderboardSuccess, getLeaderboardFailure,
     clearText, clearLeaderboard,
     getDailyTextStart, getDailyTextSuccess, getDailyTextFailure,
-    getDailyLeaderboardStart, getDailyLeaderboardSuccess, getDailyLeaderboardFailure
+    getDailyLeaderboardStart, getDailyLeaderboardSuccess, getDailyLeaderboardFailure,
+    getNextDailyTimeStart, getNextDailyTimeSuccess, getNextDailyTimeFailure
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

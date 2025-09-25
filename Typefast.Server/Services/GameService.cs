@@ -171,7 +171,7 @@ namespace Typefast.Server.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task ChangeDaily()
+        public async Task<Daily> ChangeDaily()
         {
             Daily? existing = await _db.Dailies.FirstOrDefaultAsync();
             if (existing != null)
@@ -182,14 +182,18 @@ namespace Typefast.Server.Services
             await _db.DailyScores.ExecuteDeleteAsync();
             await _db.Dailies.ExecuteDeleteAsync();
 
-            Text next = await _textService.GetRandom();
-            _db.Dailies.Add(new Daily
+            Text nextText = await _textService.GetRandom();
+
+            Daily nextDaily = new Daily
             {
-                IdTex = next.IdTex,
+                IdTex = nextText.IdTex,
                 StartTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-            });
+            };
+
+            _db.Dailies.Add(nextDaily);
 
             await _db.SaveChangesAsync();
+            return nextDaily;
         }
     }
 }
