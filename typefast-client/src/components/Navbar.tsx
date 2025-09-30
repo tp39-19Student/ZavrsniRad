@@ -47,6 +47,11 @@ export default function Navbar() {
                             <NavLink to="/play" className="nav-link">Play</NavLink>
                         </li>
                         }
+                        {user != null && user.op == 0 &&
+                        <li className="nav-item">
+                            <NavLink to="/multiplayer" className="nav-link">Multi</NavLink>
+                        </li>
+                        }
                         {user != null &&
                         <li className="nav-item">
                             <NavLink to="/texts" className="nav-link">Texts</NavLink>
@@ -74,7 +79,7 @@ export default function Navbar() {
                             :
                             <>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/auth"}>Sign In</NavLink>
+                                    <NavLink className="nav-link" to={"/"}>Sign In</NavLink>
                                 </li>
                             </>}
                         </ul>

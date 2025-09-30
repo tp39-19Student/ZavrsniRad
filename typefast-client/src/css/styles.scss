@@ -450,4 +450,87 @@ table th {
     border-radius: 0px 0px 15px 15px;
 }
 
+#MCountdown {
+    font-size: xx-large;
+    color: white;
+
+    background-color: $color-primary-dark;
+    border: 5px solid $color-primary;
+    border-radius: 20px;
+    padding: 15px;
+
+    width: 35%;
+}
+
+#MCountdown.locked {
+    border-color: $color-primary-dark;
+    background-color: #dab11b;
+    color: black;
+}
+
+#MCountdown .go {
+    color: black;
+    background-color: #dd2a2a
+}
+
+#race {
+    margin-bottom: 30px;
+}
+
+#race .entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#race .progressBar {
+    height: 30px;
+    display: flex;
+
+}
+
+#race .name {
+    font-size: large;
+    color: white;
+
+    background-color: $color-primary-dark;
+    border: 5px solid $color-primary;
+    border-radius: 20px;
+    padding: 5px;
+    
+    width: 20%;
+    margin-bottom: 10px;
+    margin-top: 10px
+}
+
+#race .progressBar {
+    width: 75%;
+
+    border-radius: 20px;
+}
+
+#race .progressBar .full {
+    border-radius: 10px !important;
+}
+
+#race .progressBar .green {
+    background-color: #48d789;
+
+    border-radius: 10px 0 0 10px;
+}
+
+#race .progressBar .red {
+    background-color: #c16464;
+
+    border-radius: 0 10px 10px 0;
+}
+
+#race .progressBar .green.quit {
+    background-color: #6da486;
+}
+
+#race .progressBar .red.quit {
+    background-color: #947b7b;
+}
+
 @import "bootstrap/scss/bootstrap";

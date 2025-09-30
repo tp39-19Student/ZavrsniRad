@@ -6,11 +6,18 @@ import { type Text } from "../text/textsSlice";
 
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import Scores from "./Scores";
+import type { GraphNode } from "./GameGraph";
+import GameGraph from "./GameGraph";
 
 
-export default function Game({text, onFinish}: {text: Text, onFinish: (score: SubmitScoreRequest) => any}) {
+export default function Game({text, onFinish, onTick = () => {}, autoStart = false}: {
+                                text: Text,
+                                onFinish: (score: SubmitScoreRequest) => any,
+                                onTick?: (progress: number, wpm: number, accuracy: number, time: number) => any,
+                                autoStart?: boolean
+                            })
+    {
     const [time, setTime] = useState(0.0);
-    const [timerHandle, setTimerHandle] = useState(0);
 
     const [mistakes, setMistakes] = useState(0);
     const mistakeFlags = useRef<Boolean[]>([]);
@@ -21,18 +28,17 @@ export default function Game({text, onFinish}: {text: Text, onFinish: (score: Su
     const [started, setStarted] = useState(false);
     const [finished, setFinished] = useState(false);
 
-    interface GraphNode {
-        time: number;
-        wpm: number;
-        accuracy: number;
-    };
+    
 
     const graph = useRef<GraphNode[]>([{time: 0, wpm: 0, accuracy: 100}]);
     const graphCaptureRate = text.content.length;
     const n = useRef(0);
 
+    const startTime = useRef(0);
+
     useEffect(() => {
         if (time > 0) {
+            onTick(correctCursor / text.content.length, calcWpm(), calcAccuracy(), time);
             n.current++;
             if (n.current >= graphCaptureRate) {
                 n.current = 0;
@@ -42,19 +48,21 @@ export default function Game({text, onFinish}: {text: Text, onFinish: (score: Su
     }, [time]);
 
     useEffect(() => {
-        if (!started && cursor > 0) {
+        if (!started || finished) return;
+        const timer = setInterval(() => {
+            setTime((Date.now() - startTime.current)/1000);
+        }, 10)
+        return () => clearInterval(timer);
+    }, [started, finished])
+
+    useEffect(() => {
+        if (!started && (autoStart || cursor > 0)) {
+            startTime.current = Date.now();
             setStarted(true);
-            setTimerHandle(setInterval(() => {
-                setTime(t => t + 0.01);
-            }, 10));
-            return;
-        }
-
-        if (started && correctCursor == text.content.length) {
+        } else if (!finished && correctCursor == text.content.length) {
             setFinished(true);
-            clearInterval(timerHandle);
-
             graphCapture();
+            onTick(1, calcWpm(), calcAccuracy(), time);
 
             onFinish({
                 idTex: text.idTex,
@@ -62,7 +70,7 @@ export default function Game({text, onFinish}: {text: Text, onFinish: (score: Su
                 accuracy: calcAccuracy()
             });
         }
-    }, [cursor])
+    }, [correctCursor])
 
     useEffect(() => {
         if (text == null) return;
@@ -75,8 +83,6 @@ export default function Game({text, onFinish}: {text: Text, onFinish: (score: Su
         if (text == null) return;
         mistakeFlags.current = Array(text.content.length).fill(false);
     }, [text])
-
-    
 
     return (
         <>
@@ -107,15 +113,9 @@ export default function Game({text, onFinish}: {text: Text, onFinish: (score: Su
             {finished &&
             <div className="center">
                 <div id="gameChart">
-                    <LineChart data={graph.current} width={800} height={300} margin={{ top: 25, right: 25, bottom: 25, left: 25 }}>
-                        <Line dataKey="wpm" strokeWidth={3} stroke="#7ab3d8ff" dot={false} />
-                        <Line dataKey="accuracy" strokeWidth={3} stroke="#ef5e5eff" dot={false} />
-                        <YAxis stroke="white" padding={{top: 25}} />
-                        <XAxis stroke="white" dataKey="time" type="number" domain={[0,0]}/>
-                        <Legend align="right" />
-                        <CartesianGrid strokeWidth={0.5} />
-                        <Tooltip />
-                    </LineChart>
+                    <GameGraph
+                        graphData={graph.current}
+                    />
                 </div>
             </div>
             }

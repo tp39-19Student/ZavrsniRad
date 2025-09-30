@@ -10,6 +10,12 @@ export default defineConfig({
         target: "https://localhost:7245",
         changeOrigin: true,
         secure: false
+      },
+      "/multiplayerHub": {
+        target: "https://localhost:7245",
+        changeOrigin: true,
+        secure: false,
+        ws: true
       }
     }
   },

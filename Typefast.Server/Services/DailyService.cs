@@ -41,7 +41,7 @@ namespace Typefast.Server.Services
 
             _logger.LogInformation("Next daily at: " + ((timeToWait > 0)?NextDailyTimestamp:"NOW"));
             _logger.LogInformation("Seconds until next daily: " + timeToWait);
-            _timer = new Timer(DoWork, null, (int)(timeToWait * 1000), IntervalSeconds * 1000);
+            _timer = new Timer(DoWork, null, timeToWait * 1000, IntervalSeconds * 1000);
         }
 
         private async void DoWork(object? state) {

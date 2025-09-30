@@ -11,6 +11,7 @@ import GlobalLeaderboard from './features/profile/GlobalLeaderboard'
 import BlockedPage from './features/user/BlockedPage'
 import SoloGame from './features/game/SoloGame'
 import DailyGame from './features/game/DailyGame'
+import MultiGame from './features/game/MultiGame'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -28,12 +29,14 @@ function App() {
       :
       <>
       <Routes>
-        <Route index element={<h1>Home</h1>} />
         <Route path='/texts' element={
           <AuthRoute role={2}><Texts /></AuthRoute>
         }></Route>
         <Route path='/play/:id?' element={
           <AuthRoute role={-1}><SoloGame /></AuthRoute>
+        }></Route>
+        <Route path='/multiplayer' element={
+          <AuthRoute role={0}><MultiGame /></AuthRoute>
         }></Route>
         <Route path='playDaily' element={
           <AuthRoute role={0}><DailyGame /></AuthRoute>
@@ -42,7 +45,7 @@ function App() {
           <AuthRoute role={2}><Profile /></AuthRoute>
         }></Route>
         <Route path='/leaderboard' element={<GlobalLeaderboard />}></Route>
-        <Route path='/auth' element={<AuthRoute role={2}><Navigate to={"/"} /></AuthRoute>}></Route>
+        <Route index element={<AuthRoute role={2}><Navigate to={"/texts"} /></AuthRoute>}></Route>
       </Routes>
       </>
     }

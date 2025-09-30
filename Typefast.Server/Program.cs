@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Typefast.Server;
 using Typefast.Server.Data;
+using Typefast.Server.Hubs;
 using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 using Typefast.Server.Services;
@@ -27,6 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+
 builder.Services.AddSingleton<DailyService>();
 builder.Services.AddSingleton<IHostedService, DailyService>(sp => sp.GetService<DailyService>()!);
 
@@ -39,6 +41,10 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TextService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<ProfileService>();
+
+builder.Services.AddSingleton<MultiplayerService>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -58,5 +64,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<AuthMiddleware>();
 
 app.MapControllers();
+
+app.MapHub<MultiplayerHub>("/multiplayerHub");
 
 app.Run();

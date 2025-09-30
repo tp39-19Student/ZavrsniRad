@@ -64,7 +64,8 @@ namespace Typefast.Server.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim("Id", user.IdPer.ToString())
+                new Claim("Id", user.IdPer.ToString()),
+                new Claim("Username", user.Username!)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
