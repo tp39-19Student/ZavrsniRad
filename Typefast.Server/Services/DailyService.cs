@@ -29,7 +29,7 @@ namespace Typefast.Server.Services
             using (var scope = Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var daily = await db.Dailies.FirstOrDefaultAsync();
+                var daily = await db.Dailies.OrderBy(d => d.IdDai).FirstOrDefaultAsync();
 
                 if (daily != null)
                 {

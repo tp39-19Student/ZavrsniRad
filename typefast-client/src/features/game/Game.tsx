@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { clearText, getTextStart, submitScoreStart, type SubmitScoreRequest } from "./gameSlice";
+import { type SubmitScoreRequest } from "./gameSlice";
 import { type Text } from "../text/textsSlice";
 
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
-import Scores from "./Scores";
 import type { GraphNode } from "./GameGraph";
 import GameGraph from "./GameGraph";
 
@@ -41,8 +37,8 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
             onTick(correctCursor / text.content.length, calcWpm(), calcAccuracy(), time);
             n.current++;
             if (n.current >= graphCaptureRate) {
-                n.current = 0;
                 graphCapture();
+                n.current = 0;
             }
         }
     }, [time]);
@@ -60,8 +56,8 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
             startTime.current = Date.now();
             setStarted(true);
         } else if (!finished && correctCursor == text.content.length) {
-            setFinished(true);
             graphCapture();
+            setFinished(true);
             onTick(1, calcWpm(), calcAccuracy(), time);
 
             onFinish({
@@ -119,6 +115,8 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
                 </div>
             </div>
             }
+
+            <button onClick={() => graphCapture()}>Extend</button>
         </>
     );
 
@@ -128,11 +126,14 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
         if (e.keyCode == 91) return; // Windows(Meta)
         if (e.ctrlKey == true) return;
         if (e.altKey == true) return;
+
+        if (e.keyCode == 9) return; // Tab
+        if (e.keyCode >= 37 && e.keyCode <= 40) return; // Arrow keys
         
         e.preventDefault();
 
         const key = e.key;
-        if (key == "Shift") return;
+        if (key == "Shift" || key == "CapsLock") return;
         //console.log("Key: " + key);
         //console.log("Keycode: " + e.keyCode);
 
@@ -172,6 +173,7 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
     }
 
     function graphCapture() {
+        if (finished) return;
         graph.current.push({
             time: (Math.ceil(time * 100) / 100),
             wpm: (Math.ceil(calcWpm() * 100) / 100),

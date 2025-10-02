@@ -11,7 +11,7 @@ namespace Typefast.Server.Data.DTOs
 
     public class GetTrendsResponse
     {
-        public List<Stat> DailyStats { get; set; } // Past 30 days
-        public List<Stat> MonthlyStats { get; set; } // Past 12 months
+        public required List<Stat> DailyStats { get; set; } // Past 30 days
+        public required List<Stat> MonthlyStats { get; set; } // Past 12 months
     }
 }

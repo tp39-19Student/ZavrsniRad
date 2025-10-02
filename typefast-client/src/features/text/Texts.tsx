@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector, useDailyCountdown } from "../../hooks";
-import { adminOnlyEndpoint, userOnlyEndpoint, type User } from "../user/usersSlice";
+import { type User } from "../user/usersSlice";
 import { type Text, approveTextStart, changeTextCategoryStart, deleteTextStart, getApprovedTextsStart, getCategoriesStart, getPendingTextsStart } from "./textsSlice";
 import AddText from "./AddText";
 import { Link } from "react-router";
@@ -8,7 +8,7 @@ import TextScores from "./TextScores";
 import Pagination from "../../components/Pagination";
 import { DropdownButton, DropdownItem, Modal } from "react-bootstrap";
 import MultiButton from "../../components/MultiButton";
-import { getDailyTextStart, getNextDailyTimeStart } from "../game/gameSlice";
+import { getDailyTextStart } from "../game/gameSlice";
 
 
 export default function Texts() {

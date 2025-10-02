@@ -6,8 +6,8 @@ namespace Typefast.Server.Data.DTOs
 {
     public class MPRoom
     {
-        public Text ChosenText { get; set; }
-        public List<MPUser> Users { get; set; }
-        public long StartTime { get; set; }
+        public required Text ChosenText { get; set; }
+        public required List<MPUser> Users { get; set; }
+        public required long StartTime { get; set; }
     }
 }

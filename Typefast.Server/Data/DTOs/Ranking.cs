@@ -4,9 +4,9 @@ namespace Typefast.Server.Data.DTOs
 {
     public class Ranking
     {
-        public int IdPer { get; set; }
-        public string Username { get; set; }
-        public double Wpm { get; set; }
-        public double Accuracy { get; set; }
+        public required int IdPer { get; set; }
+        public required string Username { get; set; }
+        public required double Wpm { get; set; }
+        public required double Accuracy { get; set; }
     }
 }

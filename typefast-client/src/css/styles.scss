@@ -214,6 +214,7 @@ table th {
 }
 
 #userTitle div.actions {
+    justify-content: right;
     padding-right: 50px;
     margin-top: 20px;
 }
@@ -329,7 +330,7 @@ table th {
     border-radius: 15px;
     border: 2px solid $color-primary;
 
-    width: 100px;
+    width: 7rem;
 }
 
 #navbar li.nav-item:has(>a.active) {
@@ -414,6 +415,8 @@ table th {
 }
 
 #gameText {
+    white-space-collapse: preserve;
+
     color: white;
     font-size: x-large;
     
@@ -440,6 +443,9 @@ table th {
 }
 
 #gameChart {
+    display: flex;
+    justify-content: center;
+
     background-color: $color-primary-dark;
     padding-right: 50px;
     padding-top: 10px;
@@ -448,6 +454,7 @@ table th {
     border-top: 0;
 
     border-radius: 0px 0px 15px 15px;
+    width: 70%;
 }
 
 #MCountdown {
@@ -481,6 +488,16 @@ table th {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#race .myEntry {
+    border: 3px solid $color-primary-dark;
+    border-radius: 20px;
+
+    background-color: $color-primary;
 }
 
 #race .progressBar {
@@ -500,7 +517,7 @@ table th {
     
     width: 20%;
     margin-bottom: 10px;
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 #race .progressBar {
@@ -531,6 +548,10 @@ table th {
 
 #race .progressBar .red.quit {
     background-color: #947b7b;
+}
+
+.pagination a:not(.active):hover {
+    color: black !important;
 }
 
 @import "bootstrap/scss/bootstrap";

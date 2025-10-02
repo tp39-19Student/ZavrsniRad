@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useEffect } from "react";
-import { clearText, getTextStart, submitScoreStart, type SubmitScoreRequest } from "./gameSlice";
+import { getTextStart, submitScoreStart, type SubmitScoreRequest } from "./gameSlice";
 import Game from "./Game";
 import Scores from "./Scores";
 

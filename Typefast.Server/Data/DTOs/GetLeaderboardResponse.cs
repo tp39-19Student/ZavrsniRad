@@ -4,7 +4,7 @@ namespace Typefast.Server.Data.DTOs
 {
     public class GetLeaderboardResponse
     {
-        public List<Score> Scores { get; set; }
-        public int IdTex { get; set; }
+        public required List<Score> Scores { get; set; }
+        public required int IdTex { get; set; }
     }
 }

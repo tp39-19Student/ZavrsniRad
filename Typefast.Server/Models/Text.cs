@@ -16,7 +16,7 @@ namespace Typefast.Server.Models
         public int IdCat { get; set; }
         public bool Approved { get; set; }
 
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         [JsonIgnore]
         public IEnumerable<Score> Scores { get; set; } = new List<Score>();

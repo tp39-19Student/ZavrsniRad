@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector } from "../hooks";
 import Login from "../features/user/Login";
 import Register from "../features/user/Register";

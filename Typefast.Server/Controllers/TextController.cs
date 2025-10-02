@@ -44,6 +44,7 @@ namespace Typefast.Server.Controllers
             return texts;
         }
 
+        [AdminOnly]
         [HttpPut("approve/{idTex}")]
         public async Task<ActionResult<Text>> Approve(int idTex)
         {
@@ -102,7 +103,7 @@ namespace Typefast.Server.Controllers
             return await _textService.GetScores(idTex);
         }
 
-        [AllowAnonymous]
+        [AdminOnly]
         [HttpGet("daily/scores")]
         public async Task<Score[]> GetDailyScores()
         {

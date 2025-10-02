@@ -25,6 +25,7 @@ namespace Typefast.Server.Services
 
             Text text = await _textService.GetById(req.IdTex);
             if (text.Approved == false) throw new StatusException(StatusCodes.Status400BadRequest, "Text is not approved, cannot submit score");
+            if (text.Content == null) throw new StatusException(StatusCodes.Status500InternalServerError, "Text has no content");
 
             Score score = new Score();
             score.IdPer = user.IdPer;
@@ -43,7 +44,7 @@ namespace Typefast.Server.Services
         public async Task<Score> SubmitDailyScore(SubmitScoreRequest req, Person user)
         {
             Score score = await SubmitScore(req, user);
-            var daily = await _db.Dailies.FirstOrDefaultAsync();
+            var daily = await _db.Dailies.OrderBy(d => d.IdDai).FirstOrDefaultAsync();
             if (daily != null && daily.IdTex == score.IdTex)
             {
                 _db.DailyScores.Add(new DailyScore
@@ -58,10 +59,10 @@ namespace Typefast.Server.Services
 
         public async Task DeleteScore(int idSco)
         {
-            var score = _db.Scores.FirstOrDefault(s => s.IdSco == idSco);
+            var score = await _db.Scores.FirstOrDefaultAsync(s => s.IdSco == idSco);
             if (score == null) throw new StatusException(StatusCodes.Status404NotFound, "There is no score with id " + idSco);
 
-            var dailyScore = await _db.DailyScores.Where(s => s.IdSco == score.IdSco).FirstOrDefaultAsync();
+            var dailyScore = await _db.DailyScores.FirstOrDefaultAsync(s => s.IdSco == score.IdSco);
             if (dailyScore != null) _db.DailyScores.Remove(dailyScore);
 
             _db.Scores.Remove(score);
@@ -144,7 +145,7 @@ namespace Typefast.Server.Services
             while (cursor < count && gold > 0)
             {
                 int idPer = leaderboard[cursor].IdPer;
-                var user = await _db.People.Where(p => p.IdPer == idPer).FirstAsync();
+                var user = await _db.People.FirstAsync(p => p.IdPer == idPer);
                 user.Gold = user.Gold + 1;
                 gold--;
                 cursor++;
@@ -153,7 +154,7 @@ namespace Typefast.Server.Services
             while (cursor < count && silver > 0)
             {
                 int idPer = leaderboard[cursor].IdPer;
-                var user = await _db.People.Where(p => p.IdPer == idPer).FirstAsync();
+                var user = await _db.People.FirstAsync(p => p.IdPer == idPer);
                 user.Silver = user.Silver + 1;
                 silver--;
                 cursor++;
@@ -162,7 +163,7 @@ namespace Typefast.Server.Services
             while (cursor < count && bronze > 0)
             {
                 int idPer = leaderboard[cursor].IdPer;
-                var user = await _db.People.Where(p => p.IdPer == idPer).FirstAsync();
+                var user = await _db.People.FirstAsync(p => p.IdPer == idPer);
                 user.Bronze = user.Bronze + 1;
                 bronze--;
                 cursor++;
@@ -173,7 +174,7 @@ namespace Typefast.Server.Services
 
         public async Task<Daily> ChangeDaily()
         {
-            Daily? existing = await _db.Dailies.FirstOrDefaultAsync();
+            Daily? existing = await _db.Dailies.OrderBy(d => d.IdDai).FirstOrDefaultAsync();
             if (existing != null)
             {
                 await GiveDailyRewards();

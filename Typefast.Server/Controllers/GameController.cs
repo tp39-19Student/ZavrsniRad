@@ -48,7 +48,6 @@ namespace Typefast.Server.Controllers
             return NoContent();
         }
 
-        [AllowAnonymous]
         [HttpGet("leaderboard/{idTex}")]
         public async Task<ActionResult<GetLeaderboardResponse>> GetLeaderboard(int idTex)
         {
@@ -60,14 +59,12 @@ namespace Typefast.Server.Controllers
             };
         }
 
-        [AllowAnonymous]
         [HttpGet("leaderboard/daily")]
         public async Task<ActionResult<List<Score>>> GetDailyLeaderboard()
         {
             return await _gameService.GetDailyLeaderboard();
         }
 
-        [AllowAnonymous]
         [HttpGet("nextDailyTime")]
         public ActionResult<long> GetNextDailyTime(DailyService dailyService)
         {

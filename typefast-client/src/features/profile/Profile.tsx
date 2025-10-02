@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getProfileStart, getProfileStatsStart, unblockStart } from "./profileSlice";
+import { getProfileStart, unblockStart } from "./profileSlice";
 import { useParams } from "react-router";
 import { setFollowStart, type User } from "../user/usersSlice";
 import TrendCharts from "./TrendCharts";
@@ -47,8 +47,8 @@ export default function Profile() {
                 }
                 <div>
                     <div id="userTitle">
-                        <div className="titleBar">
-                            <div className="title">
+                        <div className="titleBar row">
+                            <div className="title col-md-6 col-sm-12">
                                 <span>{profile.username}</span>
                                 
                                 <span id="medals">
@@ -57,7 +57,7 @@ export default function Profile() {
                                     <span className="bronze">{profile.bronze}</span>
                                 </span>
                             </div>
-                            <div className="actions">
+                            <div className="actions col-md-6 col-sm-12">
                                 {profile.idPer != user.idPer &&
                                     (isFollowed?
                                         <button

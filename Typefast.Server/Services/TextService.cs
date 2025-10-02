@@ -80,7 +80,7 @@ namespace Typefast.Server.Services
         public async Task<bool> Delete(int idTex)
         {
             Text text = await GetById(idTex);
-            Daily? daily = await _db.Dailies.FirstOrDefaultAsync();
+            Daily? daily = await _db.Dailies.OrderBy(d => d.IdDai).FirstOrDefaultAsync();
 
             if (daily != null && daily.IdTex == text.IdTex) throw new StatusException(StatusCodes.Status400BadRequest, "Cannot delete daily text");
 
@@ -107,12 +107,12 @@ namespace Typefast.Server.Services
             if (count == 0) throw new StatusException(StatusCodes.Status404NotFound, "There are no approved texts in the database");
             int index = (int)Math.Floor(rand.NextDouble() * count);
 
-            return (await _db.Texts.Where(t => t.Approved == true).Skip(index).FirstOrDefaultAsync())!;
+            return (await _db.Texts.Where(t => t.Approved == true).OrderBy(t => t.IdTex).Skip(index).FirstOrDefaultAsync())!;
         }
 
         public async Task<Text> GetDailyText()
         {
-            var daily = await _db.Dailies.FirstOrDefaultAsync();
+            var daily = await _db.Dailies.OrderBy(d => d.IdDai).FirstOrDefaultAsync();
             if (daily == null) throw new StatusException(StatusCodes.Status500InternalServerError, "Daily challenge is not set");
 
             return await _db.Texts.Where(t => t.IdTex == daily.IdTex).Include(t => t.Category).FirstAsync();

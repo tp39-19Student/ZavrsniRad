@@ -57,7 +57,7 @@ namespace Typefast.Server.Controllers
         public async Task<ActionResult<Person>> Login(LoginRequest req)
         {
             var user = await _userService.GetByUsername(req.Username);
-            if (user == null) return StatusCode(StatusCodes.Status404NotFound, "Incorrect login credentials");
+            if (user == null || user.Password == null) return StatusCode(StatusCodes.Status404NotFound, "Incorrect login credentials");
 
             var result = _hasher.VerifyHashedPassword(user, user.Password, req.Password);
             if (result != PasswordVerificationResult.Success) return StatusCode(StatusCodes.Status404NotFound, "Incorrect login credentials");

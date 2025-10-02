@@ -6,6 +6,7 @@ import type { Text } from "../text/textsSlice";
 import Game from "./Game";
 import { submitScoreStart, type SubmitScoreRequest } from "./gameSlice";
 import { Link } from "react-router";
+import { race } from "redux-saga/effects";
 
 interface MPUser {
     idPer: number;
@@ -96,15 +97,21 @@ export default function MultiGame() {
         return () => {c.stop(); setConnection(null);}
     }, []);
 
+    const raceData = [...userData].sort((a, b) => {
+        if (a.progress != b.progress) return b.progress - a.progress;
+        if (a.progress == 1) return a.time - b.time;
+        return 0;
+    });
+
     return (
         <>
             <div id="race">
-                {userData.map(u =>
-                    <div key={u.idPer} className="entry">
+                {raceData.map(u =>
+                    <div key={u.idPer} className={"entry" + (u.idPer == user.idPer?" myEntry":"")}>
                         <div className="name">{u.username}</div>
                         <div className="progressBar">
-                            <div className={"green" + (u.progress<0?" quit":"") + (Math.abs(u.progress) == 1?" full":"")} style={{width: (Math.abs(u.progress) * 100) + "%"}}></div>
-                            <div className={"red" + (u.progress<0?" quit":"") + (Math.abs(u.progress) == 0?" full":"")} style={{width: ((1 - Math.abs(u.progress)) * 100) + "%"}}></div>
+                            <div className={"green" + (u.accuracy<0?" quit":"") + (Math.abs(u.progress) == 1?" full":"")} style={{width: (Math.abs(u.progress) * 100) + "%"}}></div>
+                            <div className={"red" + (u.accuracy<0?" quit":"") + (Math.abs(u.progress) == 0?" full":"")} style={{width: ((1 - Math.abs(u.progress)) * 100) + "%"}}></div>
                         </div>
                     </div>
                 )}
@@ -184,7 +191,7 @@ export default function MultiGame() {
                 const index = nextData.findIndex(p => p.idPer == u.idPer);
                 nextData[index] = {
                     ...nextData[index],
-                    progress: -nextData[index].progress
+                    accuracy: -1
                 }
                 return nextData;
             })
@@ -193,6 +200,7 @@ export default function MultiGame() {
 
     function updateProgress(packet: MPPacket) {
         if (packet.progress == 1) setLeaderboard(leaderboard => {
+            if (leaderboard.findIndex(p => p.idPer == packet.idPer) != -1) return leaderboard;
             return [...leaderboard, {
                 idPer: packet.idPer,
                 username: packet.username,

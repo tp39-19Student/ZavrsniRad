@@ -17,10 +17,10 @@ namespace Typefast.Server.Models
         public double Time { get; set; }
         public double Accuracy { get; set; }
 
-        public Person User { get; set; }
+        public Person? User { get; set; }
         
         [JsonIgnore]
-        public Text Text { get; set; }
+        public Text? Text { get; set; }
 
         public double Wpm { get; set; }
     }

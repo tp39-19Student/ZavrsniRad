@@ -40,8 +40,11 @@ export default function Navbar() {
 
         <nav className="navbar navbar-expand" id="navbar">
             <div className="container-fluid">
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse row" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0 col-lg-6 col-sm-12">
                         {(user == null || user.op != 1) &&
                         <li className="nav-item">
                             <NavLink to="/play" className="nav-link">Play</NavLink>
@@ -61,34 +64,31 @@ export default function Navbar() {
                             <NavLink to="/leaderboard" className="nav-link">Users</NavLink>
                         </li>
                     </ul>
-                    
-                        <ul className="navbar-nav mb-auto mb-2 mb-lg-0">
-                            {user != null? <>
-                                <li className="" id="navbarInfo">
-                                    <span>Logged in as {user?.username}</span>
+                    <ul className="navbar-nav mb-auto mb-2 mb-lg-0 col-lg-6 col-sm-12 justify-content-end">
+                        {user != null? <>
+                            <li className="" id="navbarInfo">
+                                <span>Logged in as {user?.username}</span>
+                            </li>
+                            {user.op == 0 &&
+                                <li className="nav-item" id="profileNav">
+                                    <NavLink to={"/profile/" + user.idPer} className="nav-link">Profile</NavLink>
                                 </li>
-                                {user.op == 0 &&
-                                    <li className="nav-item" id="profileNav">
-                                        <NavLink to={"/profile/" + user.idPer} className="nav-link">Profile</NavLink>
-                                    </li>
-                                }
-                                <li className="nav-item">
-                                    <button id="logout" onClick={() => dispatch(logoutStart())}>Logout</button> 
-                                </li>
-                            </>
-                            :
-                            <>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/"}>Sign In</NavLink>
-                                </li>
-                            </>}
-                        </ul>
-                    
-                    
-                    
+                            }
+                            <li className="nav-item">
+                                <button id="logout" onClick={() => dispatch(logoutStart())}>Logout</button> 
+                            </li>
+                        </>
+                        :
+                        <>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to={"/"}>Sign In</NavLink>
+                            </li>
+                        </>}
+                    </ul>
                 </div>
             </div>
         </nav>
+        
         </>
     );
 }
