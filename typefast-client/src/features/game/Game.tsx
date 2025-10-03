@@ -116,7 +116,6 @@ export default function Game({text, onFinish, onTick = () => {}, autoStart = fal
             </div>
             }
 
-            <button onClick={() => graphCapture()}>Extend</button>
         </>
     );
 

@@ -78,6 +78,11 @@ export default function MultiGame() {
         });
 
         c.on("Join", (u: MPUser) => userJoin(u));
+        c.on("JoinFailure", () => {
+            alert("Join room failure (multiple connections)");
+            c.stop();
+            setConnection(null);
+        });
         c.on("Leave", (u: MPUser) => userLeave(u))
 
         c.on("Lock", () => {
@@ -94,7 +99,10 @@ export default function MultiGame() {
             updateProgress(packet);
         });
 
-        return () => {c.stop(); setConnection(null);}
+        return () => {
+            c.stop();
+            setConnection(null);
+        }
     }, []);
 
     const raceData = [...userData].sort((a, b) => {

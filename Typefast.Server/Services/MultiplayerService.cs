@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Typefast.Server.Data;
 using Typefast.Server.Data.DTOs;
 using Typefast.Server.Hubs;
+using Typefast.Server.Middleware;
 using Typefast.Server.Models;
 
 namespace Typefast.Server.Services
@@ -97,16 +98,22 @@ namespace Typefast.Server.Services
         }
 
 
-        public async Task<Room> Connect(MPUser user)
+        public async Task<Room?> Connect(MPUser user)
         {
+            try
+            {
+                var existing = UserDictionary[user.IdPer];
+                if (existing != null) return null;
+            }
+            catch (KeyNotFoundException) { }
             Room? open = Rooms.Find(r => r.IsOpen());
             if (open == null)
             {
                 using (var scope = _services.CreateScope())
                 {
                     TextService textService = scope.ServiceProvider.GetRequiredService<TextService>();
-                    //Text text = await textService.GetRandom();
-                    Text text = await textService.GetById(14);
+                    Text text = await textService.GetRandom();
+                    //Text text = await textService.GetById(14);
                     open = new Room(text, _hub);
                     Rooms.Add(open);
                     PrintRooms();

@@ -26,7 +26,12 @@ namespace Typefast.Server.Hubs
             var user = GetUser();
 
             var room = await _multiplayerService.Connect(user);
-            await Clients.Caller.SendAsync("ReceiveRoom", new MPRoom{ChosenText = room.ChosenText, Users = room.Users, StartTime = room.StartTime});
+            if (room == null)
+            {
+                await Clients.Caller.SendAsync("JoinFailure");
+                return;
+            }
+            await Clients.Caller.SendAsync("ReceiveRoom", new MPRoom { ChosenText = room.ChosenText, Users = room.Users, StartTime = room.StartTime });
 
             await Clients.Group(room.Id).SendAsync("Join", user);
 
